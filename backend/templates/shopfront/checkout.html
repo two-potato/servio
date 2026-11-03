@@ -1,23 +1,69 @@
 {% extends "shopfront/base.html" %}
 {% block content %}
+{% if begin_checkout_tracking_payload %}
+  <script type="application/json" data-analytics-payload>{{ begin_checkout_tracking_payload|safe }}</script>
+{% endif %}
+{% if checkout_step_tracking_payload %}
+  <script type="application/json" data-analytics-payload>{{ checkout_step_tracking_payload|safe }}</script>
+{% endif %}
+{% if resolved_coupon_code and coupon_discount_amount > 0 %}
+  <script type="application/json" data-analytics-payload>{"event":"coupon_applied","coupon_code":"{{ resolved_coupon_code|escapejs }}","discount_amount":{{ coupon_discount_amount }}}</script>
+{% endif %}
 <nav aria-label="breadcrumb" class="mb-3 text-sm text-base-content/60">
   <a class="link" href="/">Главная</a> / <span>Оформление заказа</span>
 </nav>
 
-<div class="grid grid-cols-1 lg:grid-cols-5 gap-3">
+<section class="checkout-focus-2026">
+  <div class="checkout-focus-2026__copy">
+    <div class="checkout-focus-2026__eyebrow">Оформление</div>
+    <h1 class="checkout-focus-2026__title">Оформление заказа без лишнего шума</h1>
+    <p class="checkout-focus-2026__subtitle">Сначала проверьте состав заказа, реквизиты и доставку. Все сопутствующие предложения вынесены в отдельный свернутый блок ниже.</p>
+    {% if not is_authenticated_checkout %}
+      <p class="checkout-focus-2026__subtitle">Гостевой checkout доступен для физических лиц без регистрации. Для B2B-заказа войдите в аккаунт компании.</p>
+    {% endif %}
+  </div>
+  <div class="checkout-focus-2026__trust">
+    <article class="checkout-focus-2026__trust-item">
+      <strong>Документы</strong>
+      <span>Счет, статусы и история заказа сохраняются после оформления.</span>
+    </article>
+    <article class="checkout-focus-2026__trust-item">
+      <strong>НДС и условия</strong>
+      <span>Цена, скидки и комментарии к закупке фиксируются в одном заказе.</span>
+    </article>
+    <article class="checkout-focus-2026__trust-item">
+      <strong>Безопасная отправка</strong>
+      <span>Идемпотентный submit защищает от дублей при повторном нажатии.</span>
+    </article>
+  </div>
+</section>
+
+<div class="grid grid-cols-1 lg:grid-cols-5 gap-3 checkout-focus-2026__grid">
   <div class="lg:col-span-3">
     <div class="card bg-base-100">
       <div class="card-body">
-        <h1 class="text-lg font-semibold mb-3">Корзина</h1>
+        <h2 class="text-lg font-semibold mb-3">Состав заказа</h2>
         {% if items %}
+          {% if seller_count > 1 %}
+            <div class="alert alert-info text-sm mb-3">
+              В заказе участвуют {{ seller_count }} поставщика. Сейчас заказ оформляется единым объектом, но интерфейс уже подготовлен к будущему разделению по поставщикам и отгрузкам.
+            </div>
+          {% endif %}
           <ul class="divide-y">
-            {% for it in items %}
-              <li class="py-2 flex justify-between">
-                <div class="min-w-0">
-                  <div class="font-semibold text-sm truncate">{{ it.p.name }}</div>
-                  <div class="text-xs text-base-content/60">{{ it.qty }} × {{ it.p.price }} ₽</div>
+            {% for group in seller_groups %}
+              <li class="py-2">
+                <div class="text-xs uppercase tracking-wide text-base-content/50 mb-2">{{ group.title }}</div>
+                <div class="grid gap-2">
+                  {% for it in group.items %}
+                    <div class="flex justify-between gap-3">
+                      <div class="min-w-0">
+                        <div class="font-semibold text-sm truncate">{{ it.p.name }}</div>
+                        <div class="text-xs text-base-content/60">{{ it.qty }} × {{ it.p.display_price }} ₽</div>
+                      </div>
+                      <div class="font-semibold text-sm">{{ it.row }} ₽</div>
+                    </div>
+                  {% endfor %}
                 </div>
-                <div class="font-semibold text-sm">{{ it.row }} ₽</div>
               </li>
             {% endfor %}
           </ul>
@@ -25,16 +71,42 @@
             <div class="font-semibold">Подытог</div>
             <div class="font-semibold">{{ subtotal }} ₽</div>
           </div>
-          {% if discount_amount > 0 %}
+          {% if profile_discount_amount > 0 %}
             <div class="mt-1 flex justify-between text-success">
               <div>Скидка ({{ discount_percent }}%)</div>
-              <div>-{{ discount_amount }} ₽</div>
+              <div>-{{ profile_discount_amount }} ₽</div>
+            </div>
+          {% endif %}
+          {% if coupon_discount_amount > 0 %}
+            <div class="mt-1 flex justify-between text-info text-sm">
+              <div>Промокод {{ resolved_coupon_code }}</div>
+              <div>-{{ coupon_discount_amount }} ₽</div>
             </div>
           {% endif %}
           <div class="mt-1 flex justify-between">
             <div class="font-semibold">Итого</div>
             <div class="font-semibold">{{ total }} ₽</div>
           </div>
+          {% if company_snapshots %}
+            <div class="checkout-company-policy mt-4">
+              <div class="checkout-company-policy__title">Guided buying и policy hints</div>
+              <div class="checkout-company-policy__grid">
+                {% for row in company_snapshots %}
+                  <article class="checkout-company-policy__item">
+                    <strong>{{ row.company.display_name|default:row.company.legal_entity.name }}</strong>
+                    <span>Платёж: {{ row.company.preferred_payment_method|default:"invoice" }}</span>
+                    <span>
+                      {% if row.policy.is_enabled %}
+                        auto-approve до {{ row.policy.auto_approve_below }} ₽ · {{ row.policy.required_approvals_count }} approval
+                      {% else %}
+                        политика согласования отключена
+                      {% endif %}
+                    </span>
+                  </article>
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
         {% else %}
           <div class="text-base-content/60">Корзина пуста</div>
         {% endif %}
@@ -46,4 +118,12 @@
     {% include "shopfront/partials/checkout_form_panel.html" %}
   </div>
 </div>
+{% if checkout_recommendations %}
+  <details class="checkout-cross-sell-2026">
+    <summary>Добавить сопутствующие товары к заказу</summary>
+    <div class="checkout-cross-sell-2026__body">
+      {% include "shopfront/components/recommendation_section.html" with products=checkout_recommendations title="Последний шанс усилить заказ" subtitle="Блок сопутствующих товаров вынесен из критического пути: открыть его можно только по запросу." recommendation_source="checkout_cross_sell" tracking_payload=checkout_recommendations_tracking_payload %}
+    </div>
+  </details>
+{% endif %}
 {% endblock %}
