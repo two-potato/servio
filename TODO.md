@@ -10,6 +10,8 @@ Updated: 2026-11-03. Scope: **only unresolved, verifiable work**. This list supe
 - [ ] **Public-repo hygiene:** audit tracked files and Git history for credentials, infrastructure identifiers and personal data; rotate any exposed secrets, then remove/privatize sensitive operational details. `.gitignore` does not erase history.
 - [ ] **Portfolio verification:** smoke-test the documented fresh-clone Compose setup, Swagger endpoint, frontend build and critical purchase path. Record reproducible output and screenshots only from actual runs.
 
+- [ ] **Branch consolidation:** after green CI, promote the reviewed candidate into the canonical `main` branch, make `main` the GitHub default and retire `dev`/candidate/release branches. Review the five unique `ref` commits before deletion; move the unrelated Sparts architecture spec from PR #5 to its own project before removing that branch. Do not bypass branch protection or the open draft production gate.
+
 ## P1 — close product migration gaps
 
 - [ ] **Next.js buyer journeys:** confirm catalog → product → cart → checkout → order history on the new storefront; eliminate unneeded legacy redirects only after parity tests pass.
