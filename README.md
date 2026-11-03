@@ -74,7 +74,7 @@ For development commands, optional observability services, reindexing and prereq
 
 The repository defines backend tests/coverage, frontend build/typechecks, CI, dependency audit and deployment checks. **A defined pipeline is not proof of a passing pipeline**: check the [latest GitHub Actions runs](https://github.com/two-potato/servio/actions) before treating any release as validated.
 
-Current work focuses on getting CI green, proving recommendation event/feedback continuity end to end, and completing the Next.js buyer-flow migration. The deliberately short, evidence-based backlog is in [TODO.md](TODO.md).
+Current work focuses on recommendation event/feedback continuity, the Next.js buyer-flow migration and a reproducible local demo. See [TODO.md](TODO.md) for a short list of remaining engineering and presentation work.
 
 ## About this repository
 

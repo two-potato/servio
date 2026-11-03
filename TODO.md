@@ -1,32 +1,26 @@
-# Servio — focused engineering backlog
+# Servio — roadmap
 
-Updated: 2026-11-03. Scope: **only unresolved, verifiable work**. This list supersedes the old unstructured `todo`; completed task transcripts stay in Git history, not in the active backlog.
+> Portfolio-oriented project roadmap. This file describes **remaining work**, not promised or completed functionality. Last updated: 2026-11-03.
 
-## P0 — make the repository demonstrably reliable
+## Core engineering
 
-- [ ] **CI:** rerun `Backend Tests + Coverage` on the latest commit and fix every failure; keep `Security Audit` passing. The 2026-08-26 run failed during pytest startup due to duplicate Prometheus metric registration. A shared observability module and a regression test are included in the portfolio cleanup, but fresh green CI evidence is still required.
-- [ ] **Recommendation feedback:** trace browser impression → click → API ingestion → persistent event → downstream feedback/analytics. Add an integration test that fails if clicks are only logged client-side or are ignored by the backend.
-- [ ] **Frontend security:** update `next` to a patched 16.x release (at least 16.4.1), `sharp` to a patched version (at least 0.35.5), and remaining transitive findings. Regenerate `frontend/package-lock.json` with npm (not by hand), run `npm ci`, `npm audit --omit=dev`, typecheck and build. The 2026-11-03 audit found critical/high advisories in the old dependency graph.
-- [ ] **Authentication:** verify `/api/users/me/` and buyer account endpoints with session/JWT flows, including 401 handling and return URLs, on the Next.js frontend.
-- [ ] **Public-repo hygiene:** audit tracked files and Git history for credentials, infrastructure identifiers and personal data; rotate any exposed secrets, then remove/privatize sensitive operational details. `.gitignore` does not erase history.
-- [ ] **Portfolio verification:** smoke-test the documented fresh-clone Compose setup, Swagger endpoint, frontend build and critical purchase path. Record reproducible output and screenshots only from actual runs.
+- [ ] **Recommendation telemetry:** verify impression → click → API event → durable feedback → attribution and add an integration test covering the entire path.
+- [ ] **Buyer account:** complete and verify the Next.js catalog, cart, checkout, order-history and authentication flows; remove legacy redirects only after functional parity.
+- [ ] **Discovery services:** finish contract/parity validation for FastAPI search and recommendation adapters against the Django fallbacks. Preserve safe routing and rollback.
+- [ ] **Dependencies:** update vulnerable frontend dependency versions and regenerate the npm lockfile using npm; retain a reproducible build and an accurate dependency manifest.
 
-- [ ] **Branch consolidation:** after green CI, promote the reviewed candidate into the canonical `main` branch, make `main` the GitHub default and retire `dev`/candidate/release branches. Review the five unique `ref` commits before deletion; move the unrelated Sparts architecture spec from PR #5 to its own project before removing that branch. Do not bypass branch protection or the open draft production gate.
+## Portfolio finish
 
-## P1 — close product migration gaps
+- [ ] Add screenshots or a concise demo video recorded from a working local installation with synthetic catalog/order data.
+- [ ] Document one repeatable local demonstration path: open catalog, search/filter, add to cart, check out, inspect order.
+- [ ] Review the public repository for secrets, operational IP addresses, proprietary data and environment-specific instructions. Rotate anything previously exposed; removing a file does not erase Git history.
+- [ ] Consolidate outdated UX experiments and historical execution transcripts into an archive without removing currently used architecture/runbook references.
 
-- [ ] **Next.js buyer journeys:** confirm catalog → product → cart → checkout → order history on the new storefront; eliminate unneeded legacy redirects only after parity tests pass.
-- [ ] **FastAPI extraction:** validate search/recommendation parity against the Django implementation, shadow/canary gates and rollback. Do **not** mark the migration complete just because service skeletons exist.
-- [ ] **API contracts:** generate and validate OpenAPI schema; add contract checks for catalog, order, corporate-account and search/recommendation endpoints.
-- [ ] **Observability:** define clear success/error/latency SLOs and useful dashboards for authentication, checkout, search and feedback.
+## Deferred ideas (not committed scope)
 
-## P2 — portfolio polish, after P0/P1
+- Courier, pickup-point and warehouse staff roles
+- 1C / document-exchange integrations
+- Gamification/rating of community comments
+- Advanced personalized ranking before reliable event collection
 
-- [ ] Add authentic screenshots or a short screen recording of a working local demo, with test data and no sensitive identifiers.
-- [ ] Consolidate old design/agent execution notes into a separately labelled historical archive **after** checking inbound links and active runbooks.
-
-## Not in scope
-
-Courier/PVZ/warehouse role expansion, badges for comments, 1C integrations and speculative near-Amazon features are **not** current commitments. Reintroduce them only with a validated use case and acceptance criteria.
-
-**Rule:** each completed item needs a code/PR link and reproducible verification. Do not label untested work “done”.
+The GitHub repository is a **technical portfolio**, not evidence of an operational e-commerce business or production deployment. Every future feature claim should point to implemented code and a reproducible example.
