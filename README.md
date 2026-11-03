@@ -1,144 +1,81 @@
 # Servio
 
-B2B marketplace monorepo on Django + HTMX with OpenSearch, Celery, Telegram bot integrations, and an observability stack.
+**A multi-vendor B2B marketplace engineering project** with corporate purchasing workflows, catalog search, recommendation experiments, and a migration from a Django-rendered storefront to Next.js.
 
-This README is the repository entrypoint. For current architecture and operational guidance, start with the source-of-truth docs listed below.
+[Architecture](docs/ARCHITECTURE.md) · [Technical case study](docs/PORTFOLIO.md) · [Local setup](docs/LOCAL_DEVELOPMENT.md) · [Current priorities](TODO.md) · [API reference](backend/API.md)
 
-## Start Here
+> **Project status:** an actively developed prototype/reference implementation, **not a verified production-ready SaaS**. The repository contains working modules alongside legacy storefront code, migration adapters and experimental services. No live demo, traffic figures or performance claims are implied.
 
-- [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) — current system architecture
-- [docs/BACKEND_GUIDE.md](./docs/BACKEND_GUIDE.md) — backend layering and placement rules
-- [docs/FRONTEND_ARCHITECTURE.md](./docs/FRONTEND_ARCHITECTURE.md) — storefront frontend/runtime model
-- [docs/LOCAL_DEVELOPMENT.md](./docs/LOCAL_DEVELOPMENT.md) — local dev workflow
-- [docs/DOCKER_GUIDE.md](./docs/DOCKER_GUIDE.md) — local Docker/Compose guidance
-- [docs/OPERATIONS_RUNBOOK_RU.md](./docs/OPERATIONS_RUNBOOK_RU.md) — production deploy, rollback, backup, restore
-- [deploy/swarm/README.md](./deploy/swarm/README.md) — two-node production Swarm bootstrap
-- [docs/PRODUCTION_READINESS.md](./docs/PRODUCTION_READINESS.md) — production release gates
+## What this project demonstrates
 
-## Repository Structure
+| Area | Evidence in the repository |
+| --- | --- |
+| **Marketplace domain** | Product catalog, taxonomy, seller offers, inventory, company workspaces, multi-seller orders and approvals in `backend/` |
+| **Backend & APIs** | Django + Django REST Framework, OpenAPI/Swagger, service-layer orchestration and PostgreSQL |
+| **Storefront migration** | Server-rendered Django/HTMX storefront plus a Next.js/React storefront foundation in `frontend/` |
+| **Discovery** | OpenSearch integration; FastAPI search and recommendation *contract/bridge* services with Django fallback |
+| **Async & integrations** | Redis, Celery jobs, Telegram bot integrations and order-feedback processing |
+| **Platform engineering** | Docker Compose, Swarm deployment manifests, GitHub Actions, Prometheus/Grafana/Loki observability and security checks |
 
-- `backend/` — Django backend, Celery, API
-- `frontend/` — Next.js storefront foundation
-- `bot/` — Telegram bot services
-- `services/` — optional search/recommendation services
-- `deploy/` — reverse proxy, monitoring and Swarm production configuration
-- `scripts/` — operational and CI helper scripts
+The current Python dependency declaration is in [`backend/pyproject.toml`](backend/pyproject.toml); frontend versions are in [`frontend/package.json`](frontend/package.json). Prefer those manifests over screenshots or outdated descriptions.
 
-## Environment Variables
+## Architecture at a glance
 
-Core variables include:
-- `POSTGRES_DB`
-- `POSTGRES_USER`
-- `POSTGRES_PASSWORD`
-- `DJANGO_SECRET_KEY`
-- `TELEGRAM_BOT_TOKEN`
-- `GOOGLE_CLIENT_ID`
-- `GOOGLE_CLIENT_SECRET`
+```mermaid
+flowchart LR
+  Web[Next.js storefront] --> Django[Django / DRF API]
+  Legacy[Django / HTMX storefront] --> Django
+  Bot[Telegram integration] --> Django
+  Django --> DB[(PostgreSQL)]
+  Django --> Cache[(Redis / Celery)]
+  Django --> Search[(OpenSearch)]
+  Django -. feature-gated contracts .-> SearchAPI[FastAPI search]
+  Django -. feature-gated contracts .-> RecoAPI[FastAPI recommendations]
+```
 
-See `backend/.env.example` for local development and `backend/.env.prod.example` for production.
+Search and recommendation service extraction is **incremental**; the diagram does not assert that both standalone services carry all production traffic. See [architecture boundaries](docs/ARCHITECTURE.md) and [API migration plan](docs/API_PLATFORM_PLAN_FASTAPI_SEARCH_RECO_RU.md).
 
-## Quick Start (Dev)
+## Explore the code
+
+- `backend/catalog/` — products, brands, categories, reviews, offers and catalog API
+- `backend/commerce/` — legal entities, memberships and corporate workspaces
+- `backend/orders/` — order lifecycle, checkout attribution and background tasks
+- `backend/shopfront/` — legacy storefront, search/recommendation orchestration
+- `backend/storefront_api/` — API adapters for the Next.js buyer experience
+- `frontend/` — Next.js storefront and buyer flows
+- `services/search-api/`, `services/recommendation-api/` — FastAPI service boundaries
+- `deploy/` — infrastructure, telemetry and Swarm configuration
+- `AGENTS.md` — repository-local development-agent conventions
+
+## Run locally
+
+Prerequisites: Docker with the Compose plugin. Commands run from the repository root.
 
 ```bash
 cp backend/.env.example backend/.env
 cp bot/.env.example bot/.env
 cp bot/.env.notify.example bot/.env.notify
 docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
-# new terminal:
+# In another terminal:
 make migrate
-make superuser
-```
-
-Open:
-- Web (Nginx proxy): http://localhost:8080/
-- Admin: http://localhost:8080/admin/
-- API docs (Swagger): http://localhost:8080/api/docs/
-- API docs (Redoc): http://localhost:8080/api/redoc/
-- API schema: http://localhost:8080/api/schema/
-- Metrics endpoint on nginx: http://localhost:8080/metrics
-
-If you start the local metrics overlay too:
-- Prometheus: http://localhost:9090
-- Grafana: http://localhost:3000
-- Alertmanager: http://localhost:9093
-- GlitchTip: http://localhost:18000
-
-## Search
-
-OpenSearch runs locally as `opensearch:9200` inside Compose. Reindex products after first boot:
-
-```bash
-docker compose exec backend python manage.py reindex_products_search
-```
-
-## Self-Hosted Error Tracking (local)
-
-Local Sentry-compatible tracking is available via GlitchTip:
-
-```bash
-docker compose -f docker-compose.yml -f docker-compose.dev.yml -f docker-compose.metrics.yml up -d glitchtip
-```
-
-Then configure `SENTRY_DSN` in the relevant local env files.
-
-## Tests
-
-Full backend suite with repository coverage gate:
-
-```bash
 make test
 ```
 
-Targeted run without the global coverage threshold:
+Common local endpoints (when the relevant services are running):
 
-```bash
-make test-fast TEST_ARGS="tests/test_shopfront_views.py -k catalog_filter"
-```
+- Storefront: http://localhost:8080/
+- Django admin: http://localhost:8080/admin/
+- OpenAPI / Swagger: http://localhost:8080/api/docs/
+- ReDoc: http://localhost:8080/api/redoc/
 
-Lint:
+For development commands, optional observability services, reindexing and prerequisites, use [local development instructions](docs/LOCAL_DEVELOPMENT.md). Never commit real `.env` files.
 
-```bash
-make lint
-```
+## Quality and known limitations
 
-## Branch and Release Workflow
+The repository defines backend tests/coverage, frontend build/typechecks, CI, dependency audit and deployment checks. **A defined pipeline is not proof of a passing pipeline**: check the [latest GitHub Actions runs](https://github.com/two-potato/servio/actions) before treating any release as validated.
 
-1. Active development is integrated through `dev`.
-2. `CI` and `Security Audit` validate production candidates.
-3. The production candidate branch must contain the current `dev` history.
-4. Production deployment is explicit: run **Deploy Production Swarm** manually or push an approved `prod-*` tag.
-5. Production deploys immutable GHCR images by commit SHA to the two-node Docker Swarm.
+Current work focuses on getting CI green, proving recommendation event/feedback continuity end to end, and completing the Next.js buyer-flow migration. The deliberately short, evidence-based backlog is in [TODO.md](TODO.md).
 
-Production is **not** deployed automatically on every feature-branch push.
+## About this repository
 
-## Production
-
-Production for `24sparts.ru` uses Docker Swarm, not the local Compose overlay.
-
-Start here:
-
-```text
-deploy/swarm/README.md
-docs/OPERATIONS_RUNBOOK_RU.md
-docs/PRODUCTION_READINESS.md
-```
-
-The production topology is one manager/core node and one worker node; application images are built by GitHub Actions and deployed by exact commit SHA.
-
-## Google OAuth (local setup)
-
-1. Create OAuth 2.0 Client ID in Google Cloud Console.
-2. Add local Authorized redirect URIs:
-   - `http://localhost:8080/account/social/google/login/callback/`
-   - `http://localhost:8000/account/social/google/login/callback/`
-3. Put credentials into `backend/.env`.
-4. Rebuild/restart backend:
-
-```bash
-docker compose build backend
-docker compose up -d backend nginx
-```
-
-## Codespaces
-
-Open the repository in Codespaces and use the local development commands above.
+This is a technical portfolio case study, not a ready-made online store. The codebase includes earlier iterations and operational references from related experiments, including a separate 24sparts deployment concept. Those references **do not make 24sparts a feature or live demo of Servio**. See [technical case study](docs/PORTFOLIO.md) for what is implemented, what is transitional, and what still needs validation.
