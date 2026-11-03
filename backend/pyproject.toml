@@ -5,7 +5,7 @@ requires-python = ">=3.12"
 dependencies = [
   "django-jazzmin>=3.0.1,<4",
   "Django>=5.2,<5.3",
-  "djangorestframework>=3.15,<3.17",
+  "djangorestframework>=3.18.2,<3.19",
   "drf-nested-routers>=0.93,<0.95",
   "psycopg[binary]>=3.2,<3.3",
   "django-cors-headers>=4.4,<5",
@@ -13,7 +13,7 @@ dependencies = [
   "redis>=5.0,<6",
   "celery>=5.4,<5.6",
   "httpx>=0.27,<0.29",
-  "weasyprint>=69.0,<70",
+  "weasyprint>=70.0,<71",
   "uvicorn>=0.30,<0.39",
   "gunicorn>=22.0,<24",
   "python-dotenv>=1.0,<2",
