@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 import os
 import sys
+
+
 def main():
     debug = os.getenv('DEBUG', '0') == '1'
     os.environ.setdefault(

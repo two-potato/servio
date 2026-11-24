@@ -1,12 +1,23 @@
+import csv
+import logging
 from typing import ClassVar
 
 from django import forms
 from django.contrib import admin
 from django.http import HttpResponse
-import csv
-import logging
-from .models import Order, OrderItem, FakeAcquiringPayment, OrderSellerSplit, SellerOrder, SellerOrderItem, Shipment, ShipmentItem, OrderApprovalLog
-from .services import plan_seller_splits, mark_seller_order_status
+
+from .models import (
+    FakeAcquiringPayment,
+    Order,
+    OrderApprovalLog,
+    OrderItem,
+    OrderSellerSplit,
+    SellerOrder,
+    SellerOrderItem,
+    Shipment,
+    ShipmentItem,
+)
+from .services import mark_seller_order_status, plan_seller_splits
 
 
 class OrderItemInline(admin.TabularInline):

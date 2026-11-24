@@ -1,6 +1,6 @@
-import os
-import hmac
 import hashlib
+import hmac
+import os
 
 SECRET = os.getenv("ORDER_APPROVE_SECRET", "dev")
 

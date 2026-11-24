@@ -1,14 +1,23 @@
 from typing import ClassVar
 
-from rest_framework import serializers
-from django.db import transaction
-from django.db.models import Prefetch
-from .models import Order, OrderItem, OrderSellerSplit, SellerOrder, SellerOrderItem, Shipment, ShipmentItem
 from catalog.models import Product
 from catalog.offer_service import active_offer_queryset, resolve_product_offer
-from commerce.models import DeliveryAddress, LegalEntityMembership
 from commerce.company_service import resolve_order_approval_requirement
+from commerce.models import DeliveryAddress, LegalEntityMembership
+from django.db import transaction
+from django.db.models import Prefetch
 from promotions.services import create_redemption, resolve_checkout_discount
+from rest_framework import serializers
+
+from .models import (
+    Order,
+    OrderItem,
+    OrderSellerSplit,
+    SellerOrder,
+    SellerOrderItem,
+    Shipment,
+    ShipmentItem,
+)
 from .services import plan_seller_splits
 
 

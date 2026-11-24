@@ -1,8 +1,10 @@
-from django.template.loader import render_to_string
-from django.conf import settings
-from weasyprint import HTML
-from pathlib import Path
 import datetime
+from pathlib import Path
+
+from django.conf import settings
+from django.template.loader import render_to_string
+from weasyprint import HTML
+
 
 def render_invoice_pdf(order):
     html = render_to_string("pdf/invoice.html", {"order": order, "today": datetime.date.today()})
