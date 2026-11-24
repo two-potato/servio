@@ -1,12 +1,18 @@
+import logging
 from typing import ClassVar
 
-from rest_framework import views, permissions
-from rest_framework.response import Response
-from drf_spectacular.utils import extend_schema
-from .models import LegalEntity, MembershipRequest, LegalEntityCreationRequest, LegalEntityMembership
-from .serializers import SimpleOkSerializer, DetailSerializer
 from core.logging_utils import LoggedAPIViewMixin
-import logging
+from drf_spectacular.utils import extend_schema
+from rest_framework import permissions, views
+from rest_framework.response import Response
+
+from .models import (
+    LegalEntity,
+    LegalEntityCreationRequest,
+    LegalEntityMembership,
+    MembershipRequest,
+)
+from .serializers import DetailSerializer, SimpleOkSerializer
 
 log = logging.getLogger("commerce")
 

@@ -1,7 +1,8 @@
 from typing import ClassVar
 
 from rest_framework import serializers
-from .models import DeliveryAddress, MembershipRequest, LegalEntityCreationRequest
+
+from .models import DeliveryAddress, LegalEntityCreationRequest, MembershipRequest
 
 
 class CheckInnResponseSerializer(serializers.Serializer):

@@ -1,10 +1,10 @@
-import os
-from typing import Optional, Dict
-import httpx
 import logging
+import os
 import time
-from django.conf import settings
+from typing import Dict, Optional
 
+import httpx
+from django.conf import settings
 
 DADATA_TOKEN = getattr(settings, "DADATA_TOKEN", os.getenv("DADATA_TOKEN", ""))
 

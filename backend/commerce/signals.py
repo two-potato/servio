@@ -1,19 +1,22 @@
-from django.db.models.signals import post_delete, post_save
-from django.dispatch import receiver
 import logging
 
 from catalog.es_index import upsert_product
 from catalog.models import Product
+from django.db.models.signals import post_delete, post_save
+from django.dispatch import receiver
 
+from .company_service import (
+    ensure_company_workspace,
+    sync_company_membership_from_legal_entity,
+)
 from .models import (
     ApprovalPolicy,
-    LegalEntityCreationRequest,
     LegalEntity,
+    LegalEntityCreationRequest,
     LegalEntityMembership,
     MembershipRole,
     SellerStore,
 )
-from .company_service import ensure_company_workspace, sync_company_membership_from_legal_entity
 
 log = logging.getLogger("commerce")
 

@@ -1,10 +1,11 @@
 from typing import ClassVar
 
-from django.db import models
-from django.conf import settings
-from django.utils.text import slugify
 from core.models import TimeStampedModel
-from .validators import validate_inn, validate_bik, validate_rs_with_bik
+from django.conf import settings
+from django.db import models
+from django.utils.text import slugify
+
+from .validators import validate_bik, validate_inn, validate_rs_with_bik
 
 User = settings.AUTH_USER_MODEL
 

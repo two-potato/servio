@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError
 
+
 def _digits(v:str):
     if not v or not v.isdigit():
         raise ValidationError("Разрешены только цифры.")
