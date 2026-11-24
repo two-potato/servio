@@ -1,7 +1,7 @@
 import logging
 import time
-from .logging_utils import set_request_context, clear_request_context
 
+from .logging_utils import clear_request_context, set_request_context
 
 request_logger = logging.getLogger("request")
 

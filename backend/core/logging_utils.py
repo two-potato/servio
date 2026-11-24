@@ -1,10 +1,10 @@
+import contextvars
+import json
 import logging
+import os
 import time
 import uuid
-import contextvars
-import os
 from typing import Optional
-import json
 
 # Context variables are async-safe and work across threads
 request_id_var: contextvars.ContextVar[str] = contextvars.ContextVar("request_id", default="-")
