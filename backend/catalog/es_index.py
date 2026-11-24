@@ -1,5 +1,4 @@
 import logging
-from typing import List
 
 import requests
 from django.conf import settings
@@ -19,8 +18,8 @@ def _timeout() -> float:
     return float(getattr(settings, "ES_TIMEOUT_SECONDS", 0.8))
 
 
-def _compact_terms(values: List[str]) -> List[str]:
-    out: List[str] = []
+def _compact_terms(values: list[str]) -> list[str]:
+    out: list[str] = []
     seen = set()
     for raw in values:
         v = " ".join(str(raw or "").strip().split())

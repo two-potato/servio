@@ -1,6 +1,5 @@
 import logging
 from hashlib import sha1
-from typing import List, Tuple
 
 import requests
 from django.conf import settings
@@ -111,7 +110,7 @@ def _search_payload(query: str, limit: int, country_limit: int):
     }
 
 
-def _es_search_bundle(query: str, limit: int, country_limit: int) -> Tuple[List[int], List[str], List[str]]:
+def _es_search_bundle(query: str, limit: int, country_limit: int) -> tuple[list[int], list[str], list[str]]:
     if not getattr(settings, "ES_ENABLED", True):
         raise ESSearchUnavailable("disabled")
     payload = _search_payload(query=query, limit=limit, country_limit=country_limit)
@@ -124,7 +123,7 @@ def _es_search_bundle(query: str, limit: int, country_limit: int) -> Tuple[List[
         raise ESSearchUnavailable(str(exc)) from exc
 
     hits = data.get("hits", {}).get("hits", [])
-    ids: List[int] = []
+    ids: list[int] = []
     for hit in hits:
         src = hit.get("_source") or {}
         raw_id = src.get("id", hit.get("_id"))
@@ -145,7 +144,7 @@ def _es_search_bundle(query: str, limit: int, country_limit: int) -> Tuple[List[
         data.get("suggest", {})
         .get("query_suggest", [])
     )
-    suggestions: List[str] = []
+    suggestions: list[str] = []
     seen = set()
     for entry in suggest_options:
         for opt in entry.get("options", []):
@@ -160,7 +159,7 @@ def _es_search_bundle(query: str, limit: int, country_limit: int) -> Tuple[List[
     return ids, countries, suggestions
 
 
-def live_search_bundle(query: str, limit: int = 8, country_limit: int = 6) -> Tuple[List[int], List[str], List[str]]:
+def live_search_bundle(query: str, limit: int = 8, country_limit: int = 6) -> tuple[list[int], list[str], list[str]]:
     norm_q = _norm_query(query)
     cache_key = f"shopfront:es_live_bundle:v2:{sha1(f'{norm_q}:{limit}:{country_limit}'.encode('utf-8')).hexdigest()}"
     cached = cache.get(cache_key)
@@ -179,7 +178,7 @@ def live_search_bundle(query: str, limit: int = 8, country_limit: int = 6) -> Tu
     return ids, countries, suggestions
 
 
-def search_product_ids(query: str, limit: int = 8) -> List[int]:
+def search_product_ids(query: str, limit: int = 8) -> list[int]:
     try:
         ids, _countries, _suggestions = _normalize_bundle(
             live_search_bundle(query=query, limit=limit, country_limit=0)
@@ -190,7 +189,7 @@ def search_product_ids(query: str, limit: int = 8) -> List[int]:
         return []
 
 
-def popular_country_suggestions(query: str, limit: int = 6) -> List[str]:
+def popular_country_suggestions(query: str, limit: int = 6) -> list[str]:
     try:
         _ids, countries, _suggestions = _normalize_bundle(
             live_search_bundle(query=query, limit=1, country_limit=limit)

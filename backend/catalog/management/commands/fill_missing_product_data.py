@@ -92,22 +92,22 @@ class Command(BaseCommand):
             updates["stock_qty"] = 50
 
         if product.weight_g is None:
-            updates["weight_g"] = Decimal("1000") if "сироп" in cat else Decimal("500")
+            updates["weight_g"] = Decimal(1000) if "сироп" in cat else Decimal(500)
 
         if "сироп" in cat or "напит" in cat:
             if product.volume_ml is None:
-                updates["volume_ml"] = Decimal("1000")
+                updates["volume_ml"] = Decimal(1000)
             if product.height_mm is None:
-                updates["height_mm"] = Decimal("280")
+                updates["height_mm"] = Decimal(280)
             if product.diameter_mm is None:
-                updates["diameter_mm"] = Decimal("75")
+                updates["diameter_mm"] = Decimal(75)
         else:
             if product.length_mm is None:
-                updates["length_mm"] = Decimal("120")
+                updates["length_mm"] = Decimal(120)
             if product.width_mm is None:
-                updates["width_mm"] = Decimal("80")
+                updates["width_mm"] = Decimal(80)
             if product.height_mm is None:
-                updates["height_mm"] = Decimal("60")
+                updates["height_mm"] = Decimal(60)
 
     def handle(self, *args, **options):
         candidates = Product.objects.filter(
