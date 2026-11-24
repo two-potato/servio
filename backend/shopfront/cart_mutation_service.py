@@ -1,9 +1,8 @@
 from decimal import Decimal
 
-from django.db.models import Prefetch
-
 from catalog.models import Product
 from catalog.offer_service import active_offer_queryset, apply_offer_snapshot
+from django.db.models import Prefetch
 
 from .cart_store import persist_cart_for_user
 

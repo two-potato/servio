@@ -1,6 +1,6 @@
+from catalog.models import Product, ProductImage
 from django.db.models import Prefetch, Q
 
-from catalog.models import Product, ProductImage
 from shopfront import search as sf_search
 
 from .search_service import DatabaseSearchProvider, suggest_query_corrections

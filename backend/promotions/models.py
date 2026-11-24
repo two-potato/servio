@@ -1,13 +1,11 @@
-from typing import ClassVar
-
 from decimal import Decimal
-
-from django.conf import settings
-from django.db import models
-from django.utils import timezone
+from typing import ClassVar
 
 from catalog.models import Brand, Category, Product
 from core.models import TimeStampedModel
+from django.conf import settings
+from django.db import models
+from django.utils import timezone
 
 
 class PromotionRule(TimeStampedModel):

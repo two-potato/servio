@@ -1,26 +1,28 @@
-from celery import shared_task
+import asyncio
 import logging
 import time
-from django.conf import settings
-from django.core.cache import cache
-import asyncio
-from django.utils import timezone
 from datetime import timedelta
-from orders.models import Order
+
 from catalog.models import Product, SellerInventory
-from commerce.models import SellerStore
-from commerce.models import LegalEntityMembership
-from core.secure import sign_approve
-from core.pdf import render_invoice_pdf
-from .models import FakeAcquiringPayment
+from celery import shared_task
+from commerce.models import LegalEntityMembership, SellerStore
 from core.notifications import (
     admin_telegram_ids,
     apost_notify_json,
+    send_email_notification,
     send_mail_message,
     send_telegram_bulk,
     send_telegram_group,
-    send_email_notification,
 )
+from core.pdf import render_invoice_pdf
+from core.secure import sign_approve
+from django.conf import settings
+from django.core.cache import cache
+from django.utils import timezone
+
+from orders.models import Order
+
+from .models import FakeAcquiringPayment
 
 log = logging.getLogger("orders")
 

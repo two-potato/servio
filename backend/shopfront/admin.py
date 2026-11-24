@@ -1,14 +1,14 @@
 from django.contrib import admin
 
 from .models import (
-    FavoriteProduct,
-    SavedSearch,
-    PersistentCart,
-    CategorySubscription,
     BrandSubscription,
+    CategorySubscription,
+    FavoriteProduct,
+    PersistentCart,
     RecentlyViewedProduct,
     SavedList,
     SavedListItem,
+    SavedSearch,
 )
 
 
