@@ -72,6 +72,17 @@ Stop the development services without deleting volumes:
 docker compose -f docker-compose.yml -f docker-compose.dev.yml down
 ```
 
+## Frontend asset development
+
+To rebuild the optional Tailwind assets, install the locked Node dependencies locally:
+
+```bash
+npm ci
+npm run tw:build
+```
+
+Commit source assets and package-lock.json, not node_modules.
+
 ## Branch and deployment policy
 
 Development lives in dev; main is intended for production. Changes should go through CI and review before merging into main. The production deployment workflow must be reviewed before triggering it. Do not use production secrets for local testing.
