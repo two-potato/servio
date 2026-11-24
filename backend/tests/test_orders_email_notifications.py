@@ -1,7 +1,6 @@
 import pytest
 from django.core import mail
 from django.test.utils import override_settings
-
 from orders.models import Order
 from orders.tasks import notify_admin_order_status_email
 

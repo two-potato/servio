@@ -1,7 +1,4 @@
 import pytest
-from django.contrib.auth import get_user_model
-from django.test import RequestFactory
-
 from catalog.models import Brand, Category, Color, Country, Product, Series, Tag
 from commerce.models import (
     DeliveryAddress,
@@ -13,6 +10,8 @@ from commerce.models import (
 )
 from commerce.signals import ensure_entity_and_membership_on_approval
 from core.middleware import RequestContextMiddleware
+from django.contrib.auth import get_user_model
+from django.test import RequestFactory
 from orders.models import Order, OrderItem
 from users.models import UserProfile
 

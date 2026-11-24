@@ -1,8 +1,6 @@
 import pytest
-
-from shopfront.catalog_selectors import category_descendant_ids, category_option_rows
 from catalog.models import Category
-
+from shopfront.catalog_selectors import category_descendant_ids, category_option_rows
 
 pytestmark = pytest.mark.django_db
 

@@ -1,8 +1,7 @@
 import pytest
+from catalog.models import Brand, Category, Product
 from django.contrib.auth import get_user_model
 from orders.models import Order, OrderItem
-from catalog.models import Brand, Category, Product
-
 
 pytestmark = pytest.mark.django_db
 

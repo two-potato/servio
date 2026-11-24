@@ -1,6 +1,6 @@
 import pytest
 from catalog.models import Brand, Category, Product, Series
-from commerce.models import LegalEntity, LegalEntityMembership, DeliveryAddress
+from commerce.models import DeliveryAddress, LegalEntity, LegalEntityMembership
 
 pytestmark = pytest.mark.django_db
 

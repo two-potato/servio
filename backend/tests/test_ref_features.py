@@ -1,9 +1,9 @@
 import pytest
-from django.core.exceptions import ValidationError
-from catalog.models import Product, ProductImage, Brand, Category, Color, Country
-from users.models import Friendship
-from django.contrib.auth import get_user_model
+from catalog.models import Brand, Category, Color, Country, Product, ProductImage
 from catalog.serializers import ProductSerializer
+from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
+from users.models import Friendship
 
 pytestmark = pytest.mark.django_db
 

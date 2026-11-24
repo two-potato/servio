@@ -1,19 +1,17 @@
 import pytest
+from catalog.models import Brand, Category, Product, SellerInventory, SellerOffer
+from catalog.offer_service import apply_offer_snapshot
+from commerce.models import LegalEntity, SellerStore
 from django.contrib.auth import get_user_model
 from django.contrib.sessions.middleware import SessionMiddleware
 from django.test import RequestFactory
-
-from catalog.models import Brand, Category, Product, SellerOffer, SellerInventory
-from commerce.models import LegalEntity, SellerStore
 from orders.models import Order, OrderItem, SellerOrder, Shipment
 from orders.services import plan_seller_splits
-from shopfront.catalog_selectors import category_descendant_ids, category_option_rows
 from shopfront.cart_checkout_service import cart_badge_context, cart_summary
-from shopfront.checkout_flow_service import ensure_checkout_idempotency_key
 from shopfront.cart_store import merge_session_cart_with_persistent
+from shopfront.catalog_selectors import category_descendant_ids, category_option_rows
+from shopfront.checkout_flow_service import ensure_checkout_idempotency_key
 from shopfront.models import PersistentCart
-from catalog.offer_service import apply_offer_snapshot
-
 
 pytestmark = pytest.mark.django_db
 
