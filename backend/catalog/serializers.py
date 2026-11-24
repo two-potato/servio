@@ -1,7 +1,9 @@
 from typing import ClassVar
 
 from rest_framework import serializers
-from .models import Brand, Series, Category, Product, ProductImage, Tag, Color, Country
+
+from .models import Brand, Category, Color, Country, Product, ProductImage, Series, Tag
+
 
 class BrandSerializer(serializers.ModelSerializer):
     class Meta:

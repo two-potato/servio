@@ -3,11 +3,18 @@ from __future__ import annotations
 from dataclasses import dataclass
 from decimal import Decimal
 
+from commerce.models import (
+    DeliveryAddress,
+    LegalEntity,
+    LegalEntityMembership,
+    MembershipRole,
+)
 from django.contrib.auth.hashers import make_password
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.db.models import Count
 from django.utils import timezone
+from users.models import User, UserProfile
 
 from catalog.models import (
     Brand,
@@ -19,8 +26,6 @@ from catalog.models import (
     Series,
     Tag,
 )
-from commerce.models import DeliveryAddress, LegalEntity, LegalEntityMembership, MembershipRole
-from users.models import User, UserProfile
 
 
 def _digits_checksum(nums: str, coeffs: list[int]) -> str:

@@ -1,11 +1,14 @@
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
-from catalog.models import Product, ProductImage, Brand, Category
-from .scrape_restinternational import (
-    list_1883, list_tinctura, parse_product, upsert_product,
-)
+from catalog.models import Brand, Category, Product, ProductImage
 
+from .scrape_restinternational import (
+    list_1883,
+    list_tinctura,
+    parse_product,
+    upsert_product,
+)
 
 ALLOWED_BRANDS = ["1883 Maison Routin", "Tinctura Anima"]
 ALLOWED_CATEGORIES = ["Сиропы", "Пюре", "Безалкогольные спириты", "Кордиалы"]

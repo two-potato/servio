@@ -1,16 +1,17 @@
+import logging
+
 from django.contrib import admin, messages
 from django.db import transaction
-import logging
 
 from .models import (
     ApprovalPolicy,
     Company,
     CompanyMembership,
-    LegalEntity,
-    LegalEntityMembership,
     DeliveryAddress,
-    MembershipRequest,
+    LegalEntity,
     LegalEntityCreationRequest,
+    LegalEntityMembership,
+    MembershipRequest,
     SellerStore,
     StoreReview,
 )

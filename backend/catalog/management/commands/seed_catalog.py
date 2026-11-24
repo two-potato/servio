@@ -1,8 +1,19 @@
-from django.core.management.base import BaseCommand
-from decimal import Decimal
 import random
-from catalog.models import Brand, Series, Category, Product, ProductImage, Country, Color, Tag
+from decimal import Decimal
+
+from django.core.management.base import BaseCommand
 from django.utils.text import slugify
+
+from catalog.models import (
+    Brand,
+    Category,
+    Color,
+    Country,
+    Product,
+    ProductImage,
+    Series,
+    Tag,
+)
 
 
 class Command(BaseCommand):

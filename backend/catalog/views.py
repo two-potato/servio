@@ -1,14 +1,20 @@
+import logging
 from typing import ClassVar
 
-from rest_framework import viewsets, permissions
 from core.logging_utils import LoggedViewSetMixin
-from django_filters.rest_framework import DjangoFilterBackend
 from django.conf import settings
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
-import logging
-from .models import Brand, Series, Category, Product
-from .serializers import BrandSerializer, SeriesSerializer, CategorySerializer, ProductSerializer
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import permissions, viewsets
+
+from .models import Brand, Category, Product, Series
+from .serializers import (
+    BrandSerializer,
+    CategorySerializer,
+    ProductSerializer,
+    SeriesSerializer,
+)
 
 log = logging.getLogger("catalog")
 

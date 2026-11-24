@@ -4,8 +4,8 @@ from urllib.parse import urljoin
 
 import requests
 from django.core.management.base import BaseCommand
-from catalog.models import Brand, Category, Product, ProductImage, Tag
 
+from catalog.models import Brand, Category, Product, ProductImage, Tag
 
 BASE = "https://restinternational.ru"
 HEADERS = {"User-Agent": "servio-bot/1.0 (+https://servio.market)"}

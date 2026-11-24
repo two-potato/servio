@@ -1,20 +1,18 @@
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from random import Random
-import re
 
+from commerce.models import SellerStore
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.utils.text import slugify
-
 from PIL import Image, ImageDraw, ImageFilter
 
 from catalog.models import Brand, Category, Product, ProductImage, Series, Tag
-from commerce.models import SellerStore
-
 
 ROOT_CATEGORIES = [
     "Сервировочная посуда",

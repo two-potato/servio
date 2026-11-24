@@ -1,5 +1,7 @@
 import json
+
 from django.core.management.base import BaseCommand, CommandError
+
 from catalog.models import Brand, Category, Product, ProductImage, Tag
 
 
