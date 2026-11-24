@@ -1,12 +1,14 @@
+from typing import ClassVar
+
 from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [
+    dependencies: ClassVar[list] = [
         ("commerce", "0002_disable_clean_noop"),
     ]
 
-    operations = [
+    operations: ClassVar[list] = [
         migrations.AddField(
             model_name="deliveryaddress",
             name="latitude",

@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from django.db import migrations
 
 
@@ -7,11 +9,11 @@ def noop(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-    dependencies = [
+    dependencies: ClassVar[list] = [
         ("commerce", "0001_initial"),
     ]
 
-    operations = [
+    operations: ClassVar[list] = [
         migrations.RunPython(noop, reverse_code=noop),
     ]
 
