@@ -1,5 +1,7 @@
 from django.contrib import admin
-from .models import User, UserProfile, Friendship
+
+from .models import Friendship, User, UserProfile
+
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):

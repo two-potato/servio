@@ -1,13 +1,14 @@
+import json
+import logging
 from typing import ClassVar
 
+from catalog.models import Product, Series
+from commerce.models import DeliveryAddress, LegalEntityMembership, SellerStore
+from commerce.validators import validate_inn
 from django import forms
 from django.contrib.auth import get_user_model
-import logging
+
 from .models import UserProfile
-from commerce.validators import validate_inn
-from commerce.models import DeliveryAddress, LegalEntityMembership, SellerStore
-import json
-from catalog.models import Product, Series
 
 User = get_user_model()
 log = logging.getLogger("users")

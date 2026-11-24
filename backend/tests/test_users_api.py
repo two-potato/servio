@@ -1,9 +1,10 @@
-import pytest
 import hashlib
 import hmac
 import json
 import time
 import urllib.parse
+
+import pytest
 from django.test.utils import override_settings
 
 pytestmark = pytest.mark.django_db

@@ -1,7 +1,8 @@
+from core.models import TimeStampedModel
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.text import slugify
-from core.models import TimeStampedModel
+
 
 class User(AbstractUser):
     email = models.EmailField(blank=True, null=True)
