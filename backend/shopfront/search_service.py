@@ -1,12 +1,11 @@
+from collections import defaultdict
 from dataclasses import dataclass
 from difflib import get_close_matches
-from collections import defaultdict
-
-from django.conf import settings
-
-from django.db.models import Q
 
 from catalog.models import Brand, Category, Product, Tag
+from django.conf import settings
+from django.db.models import Q
+
 from . import search as es_search
 
 

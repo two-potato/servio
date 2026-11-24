@@ -2,13 +2,17 @@ from __future__ import annotations
 
 from collections import Counter
 
+from catalog.models import Brand, Collection, Product
 from django.contrib.auth import get_user_model
 from django.db.models import Count, Q
-
-from catalog.models import Brand, Collection, Product
 from orders.models import OrderItem
-from shopfront.models import BrandSubscription, CategorySubscription, FavoriteProduct, RecentlyViewedProduct
 
+from shopfront.models import (
+    BrandSubscription,
+    CategorySubscription,
+    FavoriteProduct,
+    RecentlyViewedProduct,
+)
 
 User = get_user_model()
 

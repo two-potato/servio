@@ -1,6 +1,6 @@
 import pytest
+from commerce.models import LegalEntity, LegalEntityCreationRequest, MembershipRequest
 from django.contrib.auth import get_user_model
-from commerce.models import LegalEntity, MembershipRequest, LegalEntityCreationRequest
 
 pytestmark = pytest.mark.django_db
 

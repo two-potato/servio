@@ -4,33 +4,52 @@ import smtplib
 from decimal import Decimal
 
 import pytest
-from django.contrib.auth import get_user_model
-from django.core.cache import cache
-from django.test import RequestFactory, override_settings
-from django.contrib.sessions.middleware import SessionMiddleware
-
-from catalog.models import Brand, Category, Collection, Product, SellerInventory, SellerOffer
+from catalog.models import (
+    Brand,
+    Category,
+    Collection,
+    Product,
+    SellerInventory,
+    SellerOffer,
+)
 from commerce.company_service import (
     approver_memberships_for_company,
     ensure_approval_policy,
     resolve_order_approval_requirement,
     sync_company_membership_from_legal_entity,
 )
-from commerce.models import CompanyMembership, LegalEntity, LegalEntityMembership, MembershipRole, SellerStore
-from core import notifications, sentry as sentry_runtime
+from commerce.models import (
+    CompanyMembership,
+    LegalEntity,
+    LegalEntityMembership,
+    MembershipRole,
+    SellerStore,
+)
+from core import notifications
+from core import sentry as sentry_runtime
 from core.middleware import RequestContextMiddleware, RequestLoggingMiddleware
+from django.contrib.auth import get_user_model
+from django.contrib.sessions.middleware import SessionMiddleware
+from django.core.cache import cache
+from django.test import RequestFactory, override_settings
 from orders import signals as order_signals
 from orders.models import Order, OrderItem, SellerOrder
 from orders.services import mark_seller_order_status, plan_seller_splits
-from shopfront import cart_checkout_service
-from shopfront import cart_mutation_service
-from shopfront import recommendations
+from shopfront import cart_checkout_service, cart_mutation_service, recommendations
 from shopfront import search as sf_search
 from shopfront import tasks as shopfront_tasks
-from shopfront.cart_store import merge_session_cart_with_persistent, persist_cart_for_user, sanitize_cart_payload
+from shopfront.cart_store import (
+    merge_session_cart_with_persistent,
+    persist_cart_for_user,
+    sanitize_cart_payload,
+)
 from shopfront.live_search_service import live_search_context
-from shopfront.models import BrandSubscription, CategorySubscription, FavoriteProduct, RecentlyViewedProduct
-
+from shopfront.models import (
+    BrandSubscription,
+    CategorySubscription,
+    FavoriteProduct,
+    RecentlyViewedProduct,
+)
 
 pytestmark = pytest.mark.django_db
 
