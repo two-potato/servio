@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from rest_framework import viewsets, mixins, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -34,7 +36,7 @@ def _order_api_queryset():
     )
 
 class OrderViewSet(LoggedViewSetMixin, mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes: ClassVar[list] = [permissions.IsAuthenticated]
     queryset = _order_api_queryset()
 
     def get_queryset(self):
@@ -60,7 +62,7 @@ class IsInternalService(permissions.BasePermission):
 
 @extend_schema(request=None, responses={200: SimpleOkSerializer, 403: DetailSerializer})
 class OrderApproveView(LoggedAPIViewMixin, APIView):
-    permission_classes = [IsInternalService]
+    permission_classes: ClassVar[list] = [IsInternalService]
     serializer_class = SimpleOkSerializer
 
     def post(self, request, pk):
@@ -80,7 +82,7 @@ class OrderApproveView(LoggedAPIViewMixin, APIView):
 
 @extend_schema(request=None, responses={200: SimpleOkSerializer, 403: DetailSerializer})
 class OrderRejectView(LoggedAPIViewMixin, APIView):
-    permission_classes = [IsInternalService]
+    permission_classes: ClassVar[list] = [IsInternalService]
     serializer_class = SimpleOkSerializer
 
     def post(self, request, pk):

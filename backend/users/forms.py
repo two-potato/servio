@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from django import forms
 from django.contrib.auth import get_user_model
 import logging
@@ -42,8 +44,8 @@ class RegisterForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ["username", "email"]
-        labels = {"username": "Имя пользователя", "email": "Email"}
+        fields: ClassVar[list] = ["username", "email"]
+        labels: ClassVar[dict] = {"username": "Имя пользователя", "email": "Email"}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -86,8 +88,8 @@ class RegisterForm(forms.ModelForm):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ["full_name", "contact_email", "phone", "photo"]
-        labels = {
+        fields: ClassVar[list] = ["full_name", "contact_email", "phone", "photo"]
+        labels: ClassVar[dict] = {
             "full_name": "Имя",
             "contact_email": "Email",
             "phone": "Телефон",
@@ -145,7 +147,7 @@ class LegalEntityRequestForm(forms.Form):
 class AddressForm(forms.ModelForm):
     class Meta:
         model = DeliveryAddress
-        fields = [
+        fields: ClassVar[list] = [
             "legal_entity",
             "label",
             "country",
@@ -214,8 +216,8 @@ class AddressForm(forms.ModelForm):
 class SellerStoreForm(forms.ModelForm):
     class Meta:
         model = SellerStore
-        fields = ["name", "description", "legal_entity", "photo"]
-        labels = {
+        fields: ClassVar[list] = ["name", "description", "legal_entity", "photo"]
+        labels: ClassVar[dict] = {
             "name": "Название магазина",
             "description": "Описание магазина",
             "legal_entity": "Юрлицо",
@@ -251,7 +253,7 @@ class SellerProductCreateForm(forms.ModelForm):
 
     class Meta:
         model = Product
-        fields = [
+        fields: ClassVar[list] = [
             "sku",
             "manufacturer_sku",
             "name",
@@ -271,7 +273,7 @@ class SellerProductCreateForm(forms.ModelForm):
             "is_promo",
             "description",
         ]
-        labels = {
+        labels: ClassVar[dict] = {
             "sku": "SKU (8 цифр)",
             "manufacturer_sku": "Артикул производителя",
             "name": "Название товара",

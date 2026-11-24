@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from rest_framework import views, permissions
 from rest_framework.response import Response
 from drf_spectacular.utils import extend_schema
@@ -15,7 +17,7 @@ class IsAdmin(permissions.BasePermission):
 
 @extend_schema(request=None, responses={200: SimpleOkSerializer, 400: DetailSerializer})
 class ApproveMembershipView(LoggedAPIViewMixin, views.APIView):
-    permission_classes = [IsAdmin]
+    permission_classes: ClassVar[list] = [IsAdmin]
     serializer_class = SimpleOkSerializer
 
     def post(self, request, pk):
@@ -36,7 +38,7 @@ class ApproveMembershipView(LoggedAPIViewMixin, views.APIView):
 
 @extend_schema(request=None, responses={200: SimpleOkSerializer, 400: DetailSerializer})
 class RejectMembershipView(LoggedAPIViewMixin, views.APIView):
-    permission_classes = [IsAdmin]
+    permission_classes: ClassVar[list] = [IsAdmin]
     serializer_class = SimpleOkSerializer
 
     def post(self, request, pk):
@@ -53,7 +55,7 @@ class RejectMembershipView(LoggedAPIViewMixin, views.APIView):
 
 @extend_schema(request=None, responses={200: SimpleOkSerializer, 400: DetailSerializer})
 class ApproveEntityCreationView(LoggedAPIViewMixin, views.APIView):
-    permission_classes = [IsAdmin]
+    permission_classes: ClassVar[list] = [IsAdmin]
     serializer_class = SimpleOkSerializer
 
     def post(self, request, pk):
@@ -74,7 +76,7 @@ class ApproveEntityCreationView(LoggedAPIViewMixin, views.APIView):
 
 @extend_schema(request=None, responses={200: SimpleOkSerializer, 400: DetailSerializer})
 class RejectEntityCreationView(LoggedAPIViewMixin, views.APIView):
-    permission_classes = [IsAdmin]
+    permission_classes: ClassVar[list] = [IsAdmin]
     serializer_class = SimpleOkSerializer
 
     def post(self, request, pk):

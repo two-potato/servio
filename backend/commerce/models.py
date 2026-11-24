@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from django.db import models
 from django.conf import settings
 from django.utils.text import slugify
@@ -69,7 +71,7 @@ class CompanyMembership(TimeStampedModel):
     is_default_approver = models.BooleanField(default=False)
 
     class Meta:
-        constraints = [
+        constraints: ClassVar[list] = [
             models.UniqueConstraint(fields=["user", "company"], name="unique_user_company_membership"),
         ]
 
@@ -188,10 +190,10 @@ class StoreReview(TimeStampedModel):
     is_verified_buyer = models.BooleanField(default=False)
 
     class Meta:
-        constraints = [
+        constraints: ClassVar[list] = [
             models.UniqueConstraint(fields=["store", "user"], name="unique_store_review_per_user"),
         ]
-        ordering = ["-created_at", "-id"]
+        ordering: ClassVar[list] = ["-created_at", "-id"]
 
     def __str__(self):
         return f"StoreReview(store={self.store_id}, user={self.user_id}, rating={self.rating})"

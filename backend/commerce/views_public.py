@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from rest_framework import views, permissions, viewsets, mixins
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
@@ -30,7 +32,7 @@ log = logging.getLogger("commerce")
 
 @extend_schema(request=CheckInnRequestSerializer, responses=CheckInnResponseSerializer)
 class CheckInnView(LoggedAPIViewMixin, views.APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes: ClassVar[list] = [permissions.IsAuthenticated]
     serializer_class = CheckInnRequestSerializer
 
     def post(self, request):
@@ -48,7 +50,7 @@ class CheckInnView(LoggedAPIViewMixin, views.APIView):
 
 @extend_schema_view(create=extend_schema(request=MembershipRequestCreateSerializer, responses=MembershipRequestCreateSerializer))
 class MembershipRequestViewSet(LoggedViewSetMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes: ClassVar[list] = [permissions.IsAuthenticated]
     queryset = MembershipRequest.objects.all()
     serializer_class = MembershipRequestCreateSerializer
     def perform_create(self, serializer):
@@ -87,7 +89,7 @@ class MembershipRequestViewSet(LoggedViewSetMixin, mixins.CreateModelMixin, view
         log.info("membership_notify_done", extra={"admins": len(admins)})
 
 class DeliveryAddressViewSet(LoggedViewSetMixin, viewsets.ModelViewSet):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes: ClassVar[list] = [permissions.IsAuthenticated]
     serializer_class = DeliveryAddressSerializer
     queryset = DeliveryAddress.objects.none()
     lookup_field = "pk"
