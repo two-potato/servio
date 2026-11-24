@@ -1668,8 +1668,7 @@ class CatalogView(View):
             page = int(request.GET.get("page") or 1)
         except (TypeError, ValueError):
             page = 1
-        if page < 1:
-            page = 1
+        page = max(page, 1)
         page_size = 16
         selected_category_obj = None
         selected_seller_store = None

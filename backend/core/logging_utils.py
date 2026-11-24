@@ -4,7 +4,6 @@ import logging
 import os
 import time
 import uuid
-from typing import Optional
 
 # Context variables are async-safe and work across threads
 request_id_var: contextvars.ContextVar[str] = contextvars.ContextVar("request_id", default="-")
@@ -26,7 +25,7 @@ class RequestContextFilter(logging.Filter):
 
 
 def set_request_context(request, request_id_header: str = "X-Request-ID") -> str:
-    rid: Optional[str] = request.headers.get(request_id_header) or request.META.get(
+    rid: str | None = request.headers.get(request_id_header) or request.META.get(
         request_id_header.replace("-", "_")
     )
     if not rid:
@@ -52,7 +51,7 @@ def log_timing(logger: logging.Logger, label: str, start_ns: int, **fields):
     logger.info("%s done", label, extra={"duration_ms": round(dur_ms, 2), **fields})
 
 
-def log_calls(logger: Optional[logging.Logger] = None, label: Optional[str] = None):
+def log_calls(logger: logging.Logger | None = None, label: str | None = None):
     """Decorator to log start/end/exception with duration for sync functions."""
     def _wrap(fn):
         if not LOG_CALLS_ENABLED:

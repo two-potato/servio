@@ -1,7 +1,6 @@
 import logging
 import os
 import time
-from typing import Dict, Optional
 
 import httpx
 from django.conf import settings
@@ -12,7 +11,7 @@ DADATA_TOKEN = getattr(settings, "DADATA_TOKEN", os.getenv("DADATA_TOKEN", ""))
 log = logging.getLogger("commerce")
 
 
-def reverse_geocode(lat: float, lon: float) -> Optional[Dict[str, str]]:
+def reverse_geocode(lat: float, lon: float) -> dict[str, str] | None:
     """Use DaData geolocate API to get address by coordinates.
 
     Returns dict with keys: country, city, street, postcode.

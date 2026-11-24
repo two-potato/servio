@@ -80,7 +80,7 @@ class RegisterForm(forms.ModelForm):
             prof.contact_email = (self.cleaned_data.get("email") or "").strip()
             phone = self.cleaned_data.get("phone")
             if phone:
-                setattr(prof, "phone", phone)
+                prof.phone = phone
             prof.save()
             log.info("user_registered", extra={"user_id": user.id})
         return user

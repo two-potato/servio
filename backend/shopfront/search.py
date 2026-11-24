@@ -161,7 +161,7 @@ def _es_search_bundle(query: str, limit: int, country_limit: int) -> tuple[list[
 
 def live_search_bundle(query: str, limit: int = 8, country_limit: int = 6) -> tuple[list[int], list[str], list[str]]:
     norm_q = _norm_query(query)
-    cache_key = f"shopfront:es_live_bundle:v2:{sha1(f'{norm_q}:{limit}:{country_limit}'.encode('utf-8')).hexdigest()}"
+    cache_key = f"shopfront:es_live_bundle:v2:{sha1(f'{norm_q}:{limit}:{country_limit}'.encode()).hexdigest()}"
     cached = cache.get(cache_key)
     if cached is not None:
         ids, countries, suggestions = cached

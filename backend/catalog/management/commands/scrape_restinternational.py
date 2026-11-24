@@ -27,7 +27,7 @@ def list_1883(category_slug: str, limit: int) -> list[dict]:
     url = f"{BASE}/catalog/produktsiya_1883_maison_routin/{category_slug}/"
     html = fetch(url)
     # find product links
-    links = re.findall(r"href=\"(/catalog/produktsiya_1883_maison_routin/{}/\d+/)\"".format(category_slug), html)
+    links = re.findall(rf"href=\"(/catalog/produktsiya_1883_maison_routin/{category_slug}/\d+/)\"", html)
     # dedupe preserve order
     seen, result = set(), []
     for href in links:

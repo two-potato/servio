@@ -633,7 +633,6 @@ def test_contacts_feedback_submits_and_schedules_notify(client, monkeypatch, db)
 
     def _fake_delay(**kwargs):
         sent.update(kwargs)
-        return None
 
     monkeypatch.setattr(notify_contact_feedback, "delay", _fake_delay)
     r = client.post(

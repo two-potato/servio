@@ -253,8 +253,8 @@ class Command(BaseCommand):
                     street=f"Улица Нагрузки, д. {i % 300 + 1}",
                     postcode=f"{100000 + (i % 899999):06d}",
                     details=f"Подъезд {i % 8 + 1}, этаж {i % 25 + 1}",
-                    latitude=Decimal("55.750000") + Decimal(i % 1000) / Decimal("100000"),
-                    longitude=Decimal("37.620000") + Decimal(i % 1000) / Decimal("100000"),
+                    latitude=Decimal("55.750000") + Decimal(i % 1000) / Decimal(100000),
+                    longitude=Decimal("37.620000") + Decimal(i % 1000) / Decimal(100000),
                     is_default=(i % 17 == 0),
                 )
             )
