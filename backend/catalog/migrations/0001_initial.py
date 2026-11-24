@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from django.db import migrations, models
 import django.db.models.deletion
 
@@ -5,11 +7,11 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
     initial = True
 
-    dependencies = [
+    dependencies: ClassVar[list] = [
         ("core", "0001_initial"),
     ]
 
-    operations = [
+    operations: ClassVar[list] = [
         migrations.CreateModel(
             name="Brand",
             fields=[

@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from django.db import migrations
 from django.utils.text import slugify
 
@@ -39,11 +41,11 @@ def ensure_min_tags(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-    dependencies = [
+    dependencies: ClassVar[list] = [
         ("catalog", "0008_ensure_min_product_images"),
     ]
 
-    operations = [
+    operations: ClassVar[list] = [
         migrations.RunPython(ensure_min_tags, migrations.RunPython.noop),
     ]
 
