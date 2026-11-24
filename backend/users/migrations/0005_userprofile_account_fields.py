@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from django.db import migrations, models
 
 
@@ -31,11 +33,11 @@ def backfill_profiles(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-    dependencies = [
+    dependencies: ClassVar[list] = [
         ("users", "0004_userprofile_role"),
     ]
 
-    operations = [
+    operations: ClassVar[list] = [
         migrations.AddField(
             model_name="userprofile",
             name="contact_email",

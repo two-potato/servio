@@ -1,12 +1,14 @@
+from typing import ClassVar
+
 from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
     initial = True
 
-    dependencies = []
+    dependencies: ClassVar[list] = []
 
-    operations = [
+    operations: ClassVar[list] = [
         migrations.CreateModel(
             name="IdempotencyKey",
             fields=[
