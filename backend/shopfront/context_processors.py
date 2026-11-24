@@ -1,12 +1,13 @@
-from decimal import Decimal
 import logging
+from decimal import Decimal
+
+from catalog.models import Category, Product
+from catalog.offer_service import active_offer_queryset, apply_offer_snapshot
 from django.conf import settings
 from django.core.cache import cache
 from django.db.models import Prefetch
-from django.urls import resolve, Resolver404
+from django.urls import Resolver404, resolve
 
-from catalog.models import Product, Category
-from catalog.offer_service import active_offer_queryset, apply_offer_snapshot
 from .models import FavoriteProduct
 
 log = logging.getLogger("shopfront")

@@ -1,12 +1,14 @@
-from django.db import models
-from django.conf import settings
 from decimal import Decimal
+from typing import ClassVar
 from uuid import uuid4
-from django_fsm import FSMField, transition
-from core.models import TimeStampedModel
-from commerce.models import LegalEntity, DeliveryAddress
+
 from catalog.models import Product as CatalogProduct
 from catalog.models import SellerOffer
+from commerce.models import DeliveryAddress, LegalEntity
+from core.models import TimeStampedModel
+from django.conf import settings
+from django.db import models
+from django_fsm import FSMField, transition
 
 User = settings.AUTH_USER_MODEL
 
@@ -203,10 +205,10 @@ class OrderSellerSplit(TimeStampedModel):
     status = models.CharField(max_length=16, choices=Status.choices, default=Status.PLANNED)
 
     class Meta:
-        constraints = [
+        constraints: ClassVar[list] = [
             models.UniqueConstraint(fields=["order", "seller"], name="unique_seller_split_per_order"),
         ]
-        indexes = [
+        indexes: ClassVar[list] = [
             models.Index(fields=["seller", "-created_at"], name="order_split_seller_created_idx"),
         ]
 
@@ -237,10 +239,10 @@ class SellerOrder(TimeStampedModel):
     delivered_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
-        constraints = [
+        constraints: ClassVar[list] = [
             models.UniqueConstraint(fields=["order", "seller"], name="unique_seller_order_per_order"),
         ]
-        indexes = [
+        indexes: ClassVar[list] = [
             models.Index(fields=["seller", "status", "-created_at"], name="sellerorder_status_idx"),
         ]
 
@@ -258,7 +260,7 @@ class SellerOrderItem(TimeStampedModel):
     qty = models.PositiveIntegerField(default=1)
 
     class Meta:
-        ordering = ["id"]
+        ordering: ClassVar[list] = ["id"]
 
     def __str__(self):
         return f"SellerOrderItem(seller_order={self.seller_order_id}, order_item={self.order_item_id})"
@@ -282,8 +284,8 @@ class Shipment(TimeStampedModel):
     delivered_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
-        ordering = ["-created_at", "-id"]
-        indexes = [
+        ordering: ClassVar[list] = ["-created_at", "-id"]
+        indexes: ClassVar[list] = [
             models.Index(fields=["status", "-created_at"], name="shipment_status_created_idx"),
         ]
 
@@ -297,7 +299,7 @@ class ShipmentItem(TimeStampedModel):
     qty = models.PositiveIntegerField(default=1)
 
     class Meta:
-        constraints = [
+        constraints: ClassVar[list] = [
             models.UniqueConstraint(fields=["shipment", "seller_order_item"], name="unique_shipment_seller_order_item"),
         ]
 
@@ -317,7 +319,7 @@ class OrderApprovalLog(TimeStampedModel):
     comment = models.TextField(blank=True, default="")
 
     class Meta:
-        ordering = ["created_at", "id"]
+        ordering: ClassVar[list] = ["created_at", "id"]
 
     def __str__(self):
         return f"OrderApprovalLog(order={self.order_id}, actor={self.actor_id}, decision={self.decision})"

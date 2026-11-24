@@ -1,15 +1,38 @@
 import pytest
+from catalog.models import (
+    Brand,
+    Category,
+    Collection,
+    CollectionItem,
+    Country,
+    Product,
+    ProductDocument,
+    ProductImage,
+    ProductQuestion,
+    ProductReview,
+    ProductReviewComment,
+    ProductReviewPhoto,
+    ProductReviewVote,
+    SellerInventory,
+    SellerOffer,
+    Series,
+    Tag,
+)
+from commerce.models import (
+    DeliveryAddress,
+    LegalEntity,
+    LegalEntityMembership,
+    SellerStore,
+    StoreReview,
+)
 from django.contrib.auth import get_user_model
-from catalog.models import Brand, Category, Collection, CollectionItem, Country, Product, ProductDocument, ProductQuestion, ProductReview, ProductReviewComment, ProductReviewPhoto, ProductReviewVote, Series, Tag, SellerOffer, SellerInventory
+from orders.models import FakeAcquiringPayment, Order
+from promotions.models import Coupon, PromotionRedemption, PromotionRule
 from shopfront import search as sf_search
-from shopfront.search_service import SearchBundle
-from commerce.models import LegalEntity, LegalEntityMembership, DeliveryAddress, SellerStore, StoreReview
-from orders.models import Order, FakeAcquiringPayment
-from promotions.models import Coupon, PromotionRule, PromotionRedemption
 from shopfront.models import SavedList
+from shopfront.search_service import SearchBundle
 from shopfront.tasks import notify_contact_feedback
 from users.models import UserProfile
-from catalog.models import ProductImage
 
 pytestmark = pytest.mark.django_db
 
@@ -610,7 +633,6 @@ def test_contacts_feedback_submits_and_schedules_notify(client, monkeypatch, db)
 
     def _fake_delay(**kwargs):
         sent.update(kwargs)
-        return None
 
     monkeypatch.setattr(notify_contact_feedback, "delay", _fake_delay)
     r = client.post(

@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
@@ -5,12 +7,12 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
+    dependencies: ClassVar[list] = [
         ("commerce", "0012_company_workspace"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
-    operations = [
+    operations: ClassVar[list] = [
         migrations.CreateModel(
             name="StoreReview",
             fields=[

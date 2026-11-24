@@ -4,7 +4,6 @@ from urllib.parse import quote
 
 from django import template
 
-
 register = template.Library()
 
 
@@ -20,7 +19,7 @@ _PALETTES = (
 
 def _brand_name(value) -> str:
     if hasattr(value, "name"):
-        return str(getattr(value, "name") or "").strip()
+        return str(value.name or "").strip()
     return str(value or "").strip()
 
 

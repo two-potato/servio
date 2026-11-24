@@ -1,76 +1,95 @@
-# Bad Guys Shop — Full Monorepo
+# Servio
 
-**Everything merged**: base + patches (auth via Telegram WebApp, legal entities workflow, orders w/ FSM, Celery tasks, bot notifier,
-PDF invoices, catalog, admin panel, and mobile-first frontend on HTMX + Bootstrap 5). Uses **uv** for Python.
+**E-commerce backend and infrastructure portfolio project.**
 
+Servio explores a commerce workflow from catalog and authentication to order processing, notifications and observability. This repository contains the Django 5.2 implementation on the current development branch, not a claim of a finished commercial marketplace.
 
-## Repository Structure
+## Architecture
 
-backend/ — Django backend, Celery, API
-bot/ — Telegram bot
-deploy/ — configs for monitoring, nginx, etc.
+| Layer | Implementation |
+| --- | --- |
+| Application | Python 3.12+, Django 5.2, Django REST Framework |
+| Web interface | Django templates, HTMX, Bootstrap; Tailwind build helper |
+| Background jobs | Celery worker and beat, Redis |
+| Storage | PostgreSQL 16 |
+| Integration | Telegram bot / WebApp, Google OAuth configuration, PDF invoices |
+| Search | Elasticsearch 8.14 (disabled by the development override) |
+| Infrastructure | Docker Compose, Nginx, Gunicorn/Uvicorn |
+| Observability | Optional Prometheus, Grafana, Loki and exporters |
 
-## Environment Variables
-- POSTGRES_DB
-- POSTGRES_USER
-- POSTGRES_PASSWORD
-- DJANGO_SECRET_KEY
-- TELEGRAM_BOT_TOKEN
-- GOOGLE_CLIENT_ID
-- GOOGLE_CLIENT_SECRET
+```mermaid
+flowchart LR
+  U[Browser / Telegram] --> N[Nginx]
+  N --> D[Django / DRF]
+  D --> P[(PostgreSQL)]
+  D --> R[(Redis)]
+  R --> C[Celery]
+  D --> B[Bot service]
+  D -. optional .-> E[Elasticsearch]
+```
 
-## Quick Start (Dev)
+## Review this project
+
+- [Backend dependencies](backend/pyproject.toml)
+- [Service topology](docker-compose.yml)
+- [Development overrides](docker-compose.dev.yml)
+- [CI workflow](.github/workflows/ci.yml)
+- [Make targets](Makefile)
+
+CI is configured for backend tests, coverage, deployment-settings checks and lint. See [Actions](https://github.com/two-potato/servio/actions) for actual results; configured checks are not proof of a passing run.
+
+## Local development
+
+Use a clean disposable development host with Docker Engine and Compose v2. The stack uses fixed external volume names and container names: do not run these steps against a production Docker context or reuse production data.
 
 ```bash
+git clone https://github.com/two-potato/servio.git
+cd servio
+git switch dev
 cp backend/.env.example backend/.env
 cp bot/.env.example bot/.env
+# Review both files, set local-only secrets and integration settings.
+for volume in pgdata esdata redisdata staticfiles; do
+  docker volume create "servio_${volume}"
+done
+docker compose -f docker-compose.yml -f docker-compose.dev.yml config --quiet
 docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
-# new terminal:
-make migrate
-make superuser
 ```
 
-Open:
-- Web (Nginx proxy): http://localhost/
-- Admin: http://localhost/admin/
-- API docs (Swagger): http://localhost/api/docs/
-- Metrics: http://localhost/metrics
-- Prometheus: http://localhost:9090
-- Grafana: http://localhost:3000  (admin / admin)
+The base compose publishes Nginx on port 8080 by default (override with NGINX_HTTP_PORT). The backend startup command runs migrations. In a second terminal:
 
-## Workflow: Dev -> Prod
-
-1. Вся разработка идет в ветке `dev`.
-2. В `dev` запускается GitHub CI (tests/lint).
-3. В `main` попадаем только через PR из `dev`.
-4. `main` автоматически деплоится в production через `.github/workflows/deploy.yml`.
-
-Рекомендуется включить branch protection:
-- для `main`: required checks = `CI`, запрет прямого push;
-- для `dev`: required checks = `CI` (по желанию команды).
-- PR template: `.github/PULL_REQUEST_TEMPLATE.md`
-- Release checklist: `.github/RELEASE_CHECKLIST.md`
-
-## Google OAuth (real login)
-
-1. Create OAuth 2.0 Client ID in Google Cloud Console.
-2. Add Authorized redirect URIs:
-   - `http://localhost:8080/account/social/google/login/callback/`
-   - `http://localhost:8000/account/social/google/login/callback/`
-3. Put credentials into `backend/.env`:
-   - `GOOGLE_CLIENT_ID=...`
-   - `GOOGLE_CLIENT_SECRET=...`
-4. Rebuild/restart backend:
 ```bash
-docker compose build backend
-docker compose up -d backend nginx
+docker compose -f docker-compose.yml -f docker-compose.dev.yml ps
+docker compose -f docker-compose.yml -f docker-compose.dev.yml exec backend /app/.venv/bin/python manage.py createsuperuser
+docker compose -f docker-compose.yml -f docker-compose.dev.yml exec backend /app/.venv/bin/python -m pytest
 ```
 
-## Production (example)
+Expected local routes, subject to configuration: http://localhost:8080/, /admin/, /api/docs/ and /health/. Optional integrations may require your own test credentials. Never commit .env files or actual customer data.
+
+Stop the development services without deleting volumes:
+
 ```bash
-# set strong secrets in .env
-docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+docker compose -f docker-compose.yml -f docker-compose.dev.yml down
 ```
 
-## Codespaces
-Open repo in Codespaces, then the same commands as above.
+## Frontend asset development
+
+To rebuild the optional Tailwind assets, install the locked Node dependencies locally:
+
+```bash
+npm ci
+npm run tw:build
+```
+
+Commit source assets and package-lock.json, not node_modules.
+
+## Branch and deployment policy
+
+Development lives in dev; main is intended for production. Changes should go through CI and review before merging into main. The production deployment workflow must be reviewed before triggering it. Do not use production secrets for local testing.
+
+## Current limitations
+
+- Fresh-clone startup and CI status must be checked on the exact revision being reviewed.
+- No public load-test, production SLA or measured commercial performance is claimed.
+- Telegram and OAuth depend on external configuration.
+- The project is an individual, AI-assisted engineering portfolio; architecture, configuration and test evidence should be reviewed independently.

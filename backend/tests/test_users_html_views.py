@@ -1,11 +1,18 @@
-import pytest
 import re
-from django.core import mail
-from rest_framework_simplejwt.tokens import AccessToken
-from orders.models import Order
-from commerce.models import LegalEntity, LegalEntityMembership, DeliveryAddress, LegalEntityCreationRequest, SellerStore
-from users.models import UserProfile
+
+import pytest
 from catalog.models import Brand, Category, Product, ProductReview, ProductReviewComment
+from commerce.models import (
+    DeliveryAddress,
+    LegalEntity,
+    LegalEntityCreationRequest,
+    LegalEntityMembership,
+    SellerStore,
+)
+from django.core import mail
+from orders.models import Order
+from rest_framework_simplejwt.tokens import AccessToken
+from users.models import UserProfile
 
 pytestmark = pytest.mark.django_db
 

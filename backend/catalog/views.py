@@ -1,12 +1,20 @@
-from rest_framework import viewsets, permissions
+import logging
+from typing import ClassVar
+
 from core.logging_utils import LoggedViewSetMixin
-from django_filters.rest_framework import DjangoFilterBackend
 from django.conf import settings
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
-import logging
-from .models import Brand, Series, Category, Product
-from .serializers import BrandSerializer, SeriesSerializer, CategorySerializer, ProductSerializer
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import permissions, viewsets
+
+from .models import Brand, Category, Product, Series
+from .serializers import (
+    BrandSerializer,
+    CategorySerializer,
+    ProductSerializer,
+    SeriesSerializer,
+)
 
 log = logging.getLogger("catalog")
 
@@ -15,27 +23,27 @@ log = logging.getLogger("catalog")
 class BrandViewSet(LoggedViewSetMixin, viewsets.ReadOnlyModelViewSet):
     queryset = Brand.objects.all().order_by("name")
     serializer_class = BrandSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes: ClassVar[list] = [permissions.AllowAny]
 
 @method_decorator(cache_page(getattr(settings, "CACHE_TTL_CATALOG_API", 120)), name="dispatch")
 class SeriesViewSet(LoggedViewSetMixin, viewsets.ReadOnlyModelViewSet):
     queryset = Series.objects.select_related("brand").all().order_by("brand__name","name")
     serializer_class = SeriesSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes: ClassVar[list] = [permissions.AllowAny]
 
 @method_decorator(cache_page(getattr(settings, "CACHE_TTL_CATALOG_API", 120)), name="dispatch")
 class CategoryViewSet(LoggedViewSetMixin, viewsets.ReadOnlyModelViewSet):
     queryset = Category.objects.all().order_by("name")
     serializer_class = CategorySerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes: ClassVar[list] = [permissions.AllowAny]
 
 @method_decorator(cache_page(getattr(settings, "CACHE_TTL_CATALOG_API", 120)), name="dispatch")
 class ProductViewSet(LoggedViewSetMixin, viewsets.ReadOnlyModelViewSet):
     queryset = Product.objects.select_related("brand", "series", "category", "seller").prefetch_related("images").all().order_by("-is_new", "name")
     serializer_class = ProductSerializer
-    permission_classes = [permissions.AllowAny]
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ["brand","series","category","is_new","is_promo"]
+    permission_classes: ClassVar[list] = [permissions.AllowAny]
+    filter_backends: ClassVar[list] = [DjangoFilterBackend]
+    filterset_fields: ClassVar[list] = ["brand","series","category","is_new","is_promo"]
 
     def get_queryset(self):
         qs = super().get_queryset()

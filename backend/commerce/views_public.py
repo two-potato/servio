@@ -1,36 +1,44 @@
-from rest_framework import views, permissions, viewsets, mixins
-from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
-from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter
-from django.conf import settings
-from django.core.cache import cache
-from .models import LegalEntity, MembershipRequest, DeliveryAddress, LegalEntityMembership
-from .serializers import (
-    CheckInnResponseSerializer,
-    CheckInnRequestSerializer,
-    MembershipRequestCreateSerializer,
-    DeliveryAddressSerializer,
-    DetailSerializer,
-    LookupPartyResponseSerializer,
-    LookupBankResponseSerializer,
-    ReverseGeocodeResponseSerializer,
-)
 import asyncio
 import logging
 import os
+from typing import ClassVar
+
 import httpx
-from django.template import loader
-from django.http import HttpResponse
-from .utils import reverse_geocode
 from core.logging_utils import LoggedAPIViewMixin, LoggedViewSetMixin, log_calls
 from core.notifications import apost_notify_json
+from django.conf import settings
+from django.core.cache import cache
+from django.http import HttpResponse
+from django.template import loader
+from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema_view
+from rest_framework import mixins, permissions, views, viewsets
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response import Response
+
+from .models import (
+    DeliveryAddress,
+    LegalEntity,
+    LegalEntityMembership,
+    MembershipRequest,
+)
+from .serializers import (
+    CheckInnRequestSerializer,
+    CheckInnResponseSerializer,
+    DeliveryAddressSerializer,
+    DetailSerializer,
+    LookupBankResponseSerializer,
+    LookupPartyResponseSerializer,
+    MembershipRequestCreateSerializer,
+    ReverseGeocodeResponseSerializer,
+)
+from .utils import reverse_geocode
 
 log = logging.getLogger("commerce")
 
 
 @extend_schema(request=CheckInnRequestSerializer, responses=CheckInnResponseSerializer)
 class CheckInnView(LoggedAPIViewMixin, views.APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes: ClassVar[list] = [permissions.IsAuthenticated]
     serializer_class = CheckInnRequestSerializer
 
     def post(self, request):
@@ -48,7 +56,7 @@ class CheckInnView(LoggedAPIViewMixin, views.APIView):
 
 @extend_schema_view(create=extend_schema(request=MembershipRequestCreateSerializer, responses=MembershipRequestCreateSerializer))
 class MembershipRequestViewSet(LoggedViewSetMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes: ClassVar[list] = [permissions.IsAuthenticated]
     queryset = MembershipRequest.objects.all()
     serializer_class = MembershipRequestCreateSerializer
     def perform_create(self, serializer):
@@ -87,7 +95,7 @@ class MembershipRequestViewSet(LoggedViewSetMixin, mixins.CreateModelMixin, view
         log.info("membership_notify_done", extra={"admins": len(admins)})
 
 class DeliveryAddressViewSet(LoggedViewSetMixin, viewsets.ModelViewSet):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes: ClassVar[list] = [permissions.IsAuthenticated]
     serializer_class = DeliveryAddressSerializer
     queryset = DeliveryAddress.objects.none()
     lookup_field = "pk"

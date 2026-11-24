@@ -3,11 +3,18 @@ from __future__ import annotations
 from dataclasses import dataclass
 from decimal import Decimal
 
+from commerce.models import (
+    DeliveryAddress,
+    LegalEntity,
+    LegalEntityMembership,
+    MembershipRole,
+)
 from django.contrib.auth.hashers import make_password
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.db.models import Count
 from django.utils import timezone
+from users.models import User, UserProfile
 
 from catalog.models import (
     Brand,
@@ -19,8 +26,6 @@ from catalog.models import (
     Series,
     Tag,
 )
-from commerce.models import DeliveryAddress, LegalEntity, LegalEntityMembership, MembershipRole
-from users.models import User, UserProfile
 
 
 def _digits_checksum(nums: str, coeffs: list[int]) -> str:
@@ -248,8 +253,8 @@ class Command(BaseCommand):
                     street=f"Улица Нагрузки, д. {i % 300 + 1}",
                     postcode=f"{100000 + (i % 899999):06d}",
                     details=f"Подъезд {i % 8 + 1}, этаж {i % 25 + 1}",
-                    latitude=Decimal("55.750000") + Decimal(i % 1000) / Decimal("100000"),
-                    longitude=Decimal("37.620000") + Decimal(i % 1000) / Decimal("100000"),
+                    latitude=Decimal("55.750000") + Decimal(i % 1000) / Decimal(100000),
+                    longitude=Decimal("37.620000") + Decimal(i % 1000) / Decimal(100000),
                     is_default=(i % 17 == 0),
                 )
             )

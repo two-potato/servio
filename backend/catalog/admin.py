@@ -1,12 +1,31 @@
 import csv
-from django.http import HttpResponse
+from typing import ClassVar
+
 from django.contrib import admin
 from django.db.models import Avg, Count
+from django.http import HttpResponse
+
 from .models import (
-    Brand, Series, Category, Product, ProductImage, ProductDocument, Collection, CollectionItem,
-    Tag, Color, Country, ProductReview, ProductReviewComment, ProductReviewPhoto, ProductReviewVote, ProductQuestion,
-    SellerOffer, SellerInventory,
+    Brand,
+    Category,
+    Collection,
+    CollectionItem,
+    Color,
+    Country,
+    Product,
+    ProductDocument,
+    ProductImage,
+    ProductQuestion,
+    ProductReview,
+    ProductReviewComment,
+    ProductReviewPhoto,
+    ProductReviewVote,
+    SellerInventory,
+    SellerOffer,
+    Series,
+    Tag,
 )
+
 
 @admin.register(Brand)
 class BrandAdmin(admin.ModelAdmin):
@@ -44,7 +63,7 @@ class CollectionAdmin(admin.ModelAdmin):
     list_display = ("id", "name", "slug", "is_active", "is_featured")
     search_fields = ("name", "slug", "description")
     list_filter = ("is_active", "is_featured")
-    inlines = [CollectionItemInline]
+    inlines: ClassVar[list] = [CollectionItemInline]
 
 class ProductImageInline(admin.TabularInline):
     model = ProductImage
@@ -87,7 +106,7 @@ class ProductAdmin(admin.ModelAdmin):
     )
     search_fields = ("sku","name","manufacturer_sku")
     list_filter = ("brand","series","category","is_new","is_promo","tags")
-    inlines = [ProductImageInline, ProductDocumentInline, ProductReviewInline]
+    inlines: ClassVar[list] = [ProductImageInline, ProductDocumentInline, ProductReviewInline]
     actions = ("export_selected_rows",)
 
     def get_queryset(self, request):
@@ -131,7 +150,7 @@ class SellerOfferAdmin(admin.ModelAdmin):
     list_display = ("id", "product", "seller", "seller_store", "price", "status", "min_order_qty", "lead_time_days", "is_featured")
     search_fields = ("product__name", "product__sku", "seller__username", "seller_store__name")
     list_filter = ("status", "is_featured", "seller_store")
-    inlines = [SellerInventoryInline]
+    inlines: ClassVar[list] = [SellerInventoryInline]
     actions = ("export_selected_rows",)
 
     @admin.action(description="Экспортировать офферы в CSV")

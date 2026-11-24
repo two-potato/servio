@@ -1,6 +1,3 @@
-from django.db.models import Avg, Count, Prefetch
-from django.shortcuts import render
-
 from catalog.models import (
     Product,
     ProductQuestion,
@@ -9,8 +6,9 @@ from catalog.models import (
     ProductReviewPhoto,
     ProductReviewVote,
 )
+from django.db.models import Avg, Count, Prefetch
+from django.shortcuts import render
 from orders.models import Order, OrderItem
-
 
 PAID_OR_CONFIRMED_ORDER_STATUSES = [
     Order.Status.CONFIRMED,

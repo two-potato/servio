@@ -1,10 +1,23 @@
+import csv
+import logging
+from typing import ClassVar
+
 from django import forms
 from django.contrib import admin
 from django.http import HttpResponse
-import csv
-import logging
-from .models import Order, OrderItem, FakeAcquiringPayment, OrderSellerSplit, SellerOrder, SellerOrderItem, Shipment, ShipmentItem, OrderApprovalLog
-from .services import plan_seller_splits, mark_seller_order_status
+
+from .models import (
+    FakeAcquiringPayment,
+    Order,
+    OrderApprovalLog,
+    OrderItem,
+    OrderSellerSplit,
+    SellerOrder,
+    SellerOrderItem,
+    Shipment,
+    ShipmentItem,
+)
+from .services import mark_seller_order_status, plan_seller_splits
 
 
 class OrderItemInline(admin.TabularInline):
@@ -75,7 +88,7 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = ("id", "status_label", "approval_status", "split_status", "legal_entity", "placed_by", "coupon_code", "total", "created_at")
     list_filter = ("status", "approval_status", "split_status", "legal_entity", "source_channel")
     search_fields = ("id", "placed_by__username", "coupon_code", "customer_comment")
-    inlines = [OrderItemInline, OrderSellerSplitInline, SellerOrderInline, OrderApprovalLogInline, FakeAcquiringPaymentInline]
+    inlines: ClassVar[list] = [OrderItemInline, OrderSellerSplitInline, SellerOrderInline, OrderApprovalLogInline, FakeAcquiringPaymentInline]
     readonly_fields = (
         "subtotal",
         "discount_amount",
@@ -99,7 +112,7 @@ class OrderAdmin(admin.ModelAdmin):
         ("Служебные", {"fields": ("created_at", "updated_at")}),
     )
 
-    actions = [
+    actions: ClassVar[list] = [
         "mark_new",
         "mark_in_progress",
         "mark_completed",
@@ -192,7 +205,7 @@ class SellerOrderAdmin(admin.ModelAdmin):
     list_display = ("id", "order", "seller", "seller_store_name", "status", "subtotal", "total", "created_at")
     search_fields = ("order__id", "seller__username", "seller_store_name", "customer_comment")
     list_filter = ("status",)
-    inlines = [SellerOrderItemInline, ShipmentInline]
+    inlines: ClassVar[list] = [SellerOrderItemInline, ShipmentInline]
     actions = ("mark_accepted", "mark_shipped", "mark_delivered")
 
     @admin.action(description="Отметить seller order как accepted")
@@ -221,7 +234,7 @@ class ShipmentAdmin(admin.ModelAdmin):
     list_display = ("id", "seller_order", "tracking_number", "delivery_method", "warehouse_name", "status", "created_at")
     search_fields = ("tracking_number", "seller_order__order__id", "warehouse_name")
     list_filter = ("status", "delivery_method")
-    inlines = [ShipmentItemInline]
+    inlines: ClassVar[list] = [ShipmentItemInline]
 
 
 @admin.register(OrderApprovalLog)

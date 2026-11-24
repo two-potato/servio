@@ -1,10 +1,17 @@
 import pytest
+from commerce.company_service import (
+    ensure_approval_policy,
+    ensure_company_workspace,
+    resolve_order_approval_requirement,
+)
+from commerce.models import (
+    CompanyMembership,
+    LegalEntity,
+    LegalEntityMembership,
+    MembershipRole,
+)
 from django.contrib.auth import get_user_model
-
-from commerce.company_service import ensure_company_workspace, ensure_approval_policy, resolve_order_approval_requirement
-from commerce.models import CompanyMembership, LegalEntity, LegalEntityMembership, MembershipRole
 from orders.models import Order
-
 
 pytestmark = pytest.mark.django_db
 

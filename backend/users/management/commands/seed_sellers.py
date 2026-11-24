@@ -1,14 +1,18 @@
 import base64
 from itertools import cycle
 
+from catalog.models import Product
+from commerce.models import (
+    LegalEntity,
+    LegalEntityMembership,
+    MembershipRole,
+    SellerStore,
+)
 from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
 from django.core.management.base import BaseCommand
 
-from catalog.models import Product
-from commerce.models import LegalEntity, LegalEntityMembership, MembershipRole, SellerStore
 from users.models import UserProfile
-
 
 TINY_PNG = base64.b64decode(
     "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO5+gX8AAAAASUVORK5CYII="

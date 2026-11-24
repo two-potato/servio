@@ -1,15 +1,17 @@
+from typing import ClassVar
+
 from django.db import migrations, models
 import django.db.models.deletion
 import django.core.validators
 
 
 class Migration(migrations.Migration):
-    dependencies = [
+    dependencies: ClassVar[list] = [
         ("catalog", "0003_product_extra_fields"),
         ("core", "0001_initial"),
     ]
 
-    operations = [
+    operations: ClassVar[list] = [
         # New lookup models
         migrations.CreateModel(
             name="Color",

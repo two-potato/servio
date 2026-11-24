@@ -1,10 +1,10 @@
-from django.conf import settings
-from django.db import models
-
+from typing import ClassVar
 from uuid import uuid4
 
-from catalog.models import Product, Brand, Category
+from catalog.models import Brand, Category, Product
 from core.models import TimeStampedModel
+from django.conf import settings
+from django.db import models
 
 
 class FavoriteProduct(TimeStampedModel):
@@ -20,13 +20,13 @@ class FavoriteProduct(TimeStampedModel):
     )
 
     class Meta:
-        constraints = [
+        constraints: ClassVar[list] = [
             models.UniqueConstraint(
                 fields=["user", "product"],
                 name="unique_favorite_product_per_user",
             ),
         ]
-        indexes = [
+        indexes: ClassVar[list] = [
             models.Index(fields=["user", "-created_at"], name="fav_user_created_idx"),
         ]
 
@@ -44,8 +44,8 @@ class SavedSearch(TimeStampedModel):
     querystring = models.CharField(max_length=512)
 
     class Meta:
-        ordering = ["-created_at"]
-        indexes = [
+        ordering: ClassVar[list] = ["-created_at"]
+        indexes: ClassVar[list] = [
             models.Index(fields=["user", "-created_at"], name="saved_search_user_created_idx"),
         ]
 
@@ -82,13 +82,13 @@ class CategorySubscription(TimeStampedModel):
     )
 
     class Meta:
-        constraints = [
+        constraints: ClassVar[list] = [
             models.UniqueConstraint(
                 fields=["user", "category"],
                 name="unique_category_subscription_per_user",
             ),
         ]
-        indexes = [
+        indexes: ClassVar[list] = [
             models.Index(fields=["user", "-created_at"], name="cat_sub_user_created_idx"),
         ]
 
@@ -109,13 +109,13 @@ class BrandSubscription(TimeStampedModel):
     )
 
     class Meta:
-        constraints = [
+        constraints: ClassVar[list] = [
             models.UniqueConstraint(
                 fields=["user", "brand"],
                 name="unique_brand_subscription_per_user",
             ),
         ]
-        indexes = [
+        indexes: ClassVar[list] = [
             models.Index(fields=["user", "-created_at"], name="brand_sub_user_created_idx"),
         ]
 
@@ -136,13 +136,13 @@ class RecentlyViewedProduct(TimeStampedModel):
     )
 
     class Meta:
-        constraints = [
+        constraints: ClassVar[list] = [
             models.UniqueConstraint(
                 fields=["user", "product"],
                 name="unique_recently_viewed_product_per_user",
             ),
         ]
-        indexes = [
+        indexes: ClassVar[list] = [
             models.Index(fields=["user", "-updated_at"], name="recent_view_user_updated_idx"),
         ]
 
@@ -169,8 +169,8 @@ class SavedList(TimeStampedModel):
     source = models.CharField(max_length=24, choices=Source.choices, default=Source.MANUAL)
 
     class Meta:
-        ordering = ["-updated_at", "-id"]
-        indexes = [
+        ordering: ClassVar[list] = ["-updated_at", "-id"]
+        indexes: ClassVar[list] = [
             models.Index(fields=["user", "-updated_at"], name="saved_list_user_updated_idx"),
         ]
 
@@ -205,8 +205,8 @@ class SavedListItem(TimeStampedModel):
     ordering = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ["ordering", "-updated_at", "id"]
-        constraints = [
+        ordering: ClassVar[list] = ["ordering", "-updated_at", "id"]
+        constraints: ClassVar[list] = [
             models.UniqueConstraint(
                 fields=["saved_list", "product"],
                 name="unique_saved_list_product",

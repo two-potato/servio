@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from django.db import migrations, models
 
 
@@ -46,11 +48,11 @@ def fill_product_descriptions(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
-    dependencies = [
+    dependencies: ClassVar[list] = [
         ("catalog", "0004_ref_updates"),
     ]
 
-    operations = [
+    operations: ClassVar[list] = [
         migrations.AddField(
             model_name="product",
             name="description",

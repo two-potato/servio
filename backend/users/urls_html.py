@@ -1,10 +1,24 @@
-from django.urls import path, include
+from django.urls import include, path
+
 from .views_html import (
-    account_home, account_addresses, account_legal_entities, account_orders, account_order_detail, account_comments,
+    account_addresses,
+    account_comments,
+    account_home,
+    account_legal_entities,
     account_order_approval_action,
-    login_view, register_view, logout_view, telegram_webapp_login, cancel_legal_request, confirm_email_view,
-    validate_login_form, validate_register_form,
-    account_seller_home, account_seller_product_add, account_seller_product_edit,
+    account_order_detail,
+    account_orders,
+    account_seller_home,
+    account_seller_product_add,
+    account_seller_product_edit,
+    cancel_legal_request,
+    confirm_email_view,
+    login_view,
+    logout_view,
+    register_view,
+    telegram_webapp_login,
+    validate_login_form,
+    validate_register_form,
 )
 
 urlpatterns = [

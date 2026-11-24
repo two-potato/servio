@@ -1,9 +1,14 @@
-from celery import shared_task
 import asyncio
 import logging
+
+from celery import shared_task
+from core.notifications import (
+    apost_notify_json,
+    is_telegram_recipient_quarantined,
+    send_mail_message,
+)
 from django.conf import settings
 from users.models import UserProfile
-from core.notifications import apost_notify_json, is_telegram_recipient_quarantined, send_mail_message
 
 log = logging.getLogger("shopfront")
 

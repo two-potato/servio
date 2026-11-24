@@ -1,17 +1,27 @@
-from rest_framework import viewsets, mixins, permissions, status
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from drf_spectacular.utils import extend_schema
+import hmac
+import logging
+from typing import ClassVar
+
+from commerce.models import LegalEntityMembership
+from commerce.serializers import DetailSerializer, SimpleOkSerializer
+from core.logging_utils import LoggedAPIViewMixin, LoggedViewSetMixin
 from django.conf import settings
 from django.db.models import Prefetch
 from django.shortcuts import get_object_or_404
-import hmac
-from .models import Order, OrderItem, OrderSellerSplit, SellerOrder, SellerOrderItem, Shipment
-from .serializers import OrderSerializer, OrderCreateSerializer
-from commerce.serializers import SimpleOkSerializer, DetailSerializer
-from commerce.models import LegalEntityMembership
-from core.logging_utils import LoggedViewSetMixin, LoggedAPIViewMixin
-import logging
+from drf_spectacular.utils import extend_schema
+from rest_framework import mixins, permissions, status, viewsets
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from .models import (
+    Order,
+    OrderItem,
+    OrderSellerSplit,
+    SellerOrder,
+    SellerOrderItem,
+    Shipment,
+)
+from .serializers import OrderCreateSerializer, OrderSerializer
 
 log = logging.getLogger("orders")
 
@@ -34,7 +44,7 @@ def _order_api_queryset():
     )
 
 class OrderViewSet(LoggedViewSetMixin, mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes: ClassVar[list] = [permissions.IsAuthenticated]
     queryset = _order_api_queryset()
 
     def get_queryset(self):
@@ -60,7 +70,7 @@ class IsInternalService(permissions.BasePermission):
 
 @extend_schema(request=None, responses={200: SimpleOkSerializer, 403: DetailSerializer})
 class OrderApproveView(LoggedAPIViewMixin, APIView):
-    permission_classes = [IsInternalService]
+    permission_classes: ClassVar[list] = [IsInternalService]
     serializer_class = SimpleOkSerializer
 
     def post(self, request, pk):
@@ -80,7 +90,7 @@ class OrderApproveView(LoggedAPIViewMixin, APIView):
 
 @extend_schema(request=None, responses={200: SimpleOkSerializer, 403: DetailSerializer})
 class OrderRejectView(LoggedAPIViewMixin, APIView):
-    permission_classes = [IsInternalService]
+    permission_classes: ClassVar[list] = [IsInternalService]
     serializer_class = SimpleOkSerializer
 
     def post(self, request, pk):

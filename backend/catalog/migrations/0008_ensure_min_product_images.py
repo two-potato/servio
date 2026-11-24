@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from django.db import migrations
 
 
@@ -20,10 +22,10 @@ def ensure_min_images(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-    dependencies = [
+    dependencies: ClassVar[list] = [
         ("catalog", "0007_productreviewcomment"),
     ]
 
-    operations = [
+    operations: ClassVar[list] = [
         migrations.RunPython(ensure_min_images, migrations.RunPython.noop),
     ]

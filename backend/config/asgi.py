@@ -1,7 +1,8 @@
 import os
+
 from core.sentry import init_sentry
-from django.core.asgi import get_asgi_application
 from django.conf import settings
+from django.core.asgi import get_asgi_application
 
 # Выбираем настройки по переменной окружения DEBUG
 debug = os.getenv('DEBUG', '0') == '1'

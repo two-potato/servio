@@ -28,3 +28,12 @@ logs/
 backend/logs/
 backend/.coverage
 backend/coverage.xml
+
+# Local dependency and build artifacts
+node_modules/
+.venv/
+.next/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.tsbuildinfo

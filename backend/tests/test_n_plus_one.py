@@ -1,26 +1,29 @@
 import pytest
-from django.contrib.auth import get_user_model
-from django.db import connection
-from django.test.utils import CaptureQueriesContext
-
 from catalog.models import (
     Brand,
     Category,
     Product,
     ProductImage,
+    ProductQuestion,
     ProductReview,
     ProductReviewComment,
     ProductReviewPhoto,
-    ProductQuestion,
     Series,
     Tag,
 )
-from commerce.models import DeliveryAddress, LegalEntity, LegalEntityMembership, SellerStore
+from commerce.models import (
+    DeliveryAddress,
+    LegalEntity,
+    LegalEntityMembership,
+    SellerStore,
+)
+from django.contrib.auth import get_user_model
+from django.db import connection
+from django.test.utils import CaptureQueriesContext
 from orders.models import Order, OrderItem, SellerOrder, SellerOrderItem
+from shopfront.search_service import SearchBundle
 from users.models import UserProfile
 from users.views_html import _company_workspace_rows
-from shopfront.search_service import SearchBundle
-
 
 pytestmark = pytest.mark.django_db
 

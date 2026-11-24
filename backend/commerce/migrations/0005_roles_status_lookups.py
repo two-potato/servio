@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from django.db import migrations, models
 
 
@@ -49,11 +51,11 @@ def seed_and_migrate(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-    dependencies = [
+    dependencies: ClassVar[list] = [
         ('commerce', '0004_legalentity_members'),
     ]
 
-    operations = [
+    operations: ClassVar[list] = [
         migrations.CreateModel(
             name='MembershipRole',
             fields=[

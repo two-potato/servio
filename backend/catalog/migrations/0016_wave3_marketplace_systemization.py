@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
@@ -5,13 +7,13 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
+    dependencies: ClassVar[list] = [
         ("commerce", "0011_sellerstore_ops_fields"),
         ("catalog", "0015_brand_collection_review_growth"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
-    operations = [
+    operations: ClassVar[list] = [
         migrations.AddField(
             model_name="brand",
             name="faq_body",

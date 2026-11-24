@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from django.db import migrations
 from django.utils.text import slugify
 
@@ -38,10 +40,10 @@ def normalize_slugs(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-    dependencies = [
+    dependencies: ClassVar[list] = [
         ("catalog", "0010_add_slugs_for_category_and_product"),
     ]
 
-    operations = [
+    operations: ClassVar[list] = [
         migrations.RunPython(normalize_slugs, migrations.RunPython.noop),
     ]

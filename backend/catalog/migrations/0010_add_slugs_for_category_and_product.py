@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from django.db import migrations, models
 from django.utils.text import slugify
 
@@ -38,11 +40,11 @@ def populate_slugs(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-    dependencies = [
+    dependencies: ClassVar[list] = [
         ("catalog", "0009_ensure_min_product_tags"),
     ]
 
-    operations = [
+    operations: ClassVar[list] = [
         migrations.AddField(
             model_name="category",
             name="slug",

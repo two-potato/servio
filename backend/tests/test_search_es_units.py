@@ -1,7 +1,6 @@
 import pytest
-from django.test import override_settings
-
 from catalog import es_index
+from django.test import override_settings
 from shopfront import search as sf_search
 
 pytestmark = pytest.mark.django_db

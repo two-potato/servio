@@ -1,10 +1,12 @@
-from django.db import models
-from django.core.validators import RegexValidator
-from django.core.validators import MinValueValidator, MaxValueValidator
-from django.core.exceptions import ValidationError
-from django.conf import settings
-from django.utils.text import slugify
+from typing import ClassVar
+
 from core.models import TimeStampedModel
+from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
+from django.db import models
+from django.utils.text import slugify
+
 
 class SeoFieldsMixin(models.Model):
     """Reusable mixin to add SEO metadata to models."""
@@ -151,7 +153,7 @@ class Product(TimeStampedModel, SeoFieldsMixin):
     )
 
     class Meta:
-        indexes = [
+        indexes: ClassVar[list] = [
             models.Index(fields=["-is_new", "name", "id"], name="product_new_name_idx"),
             models.Index(fields=["-is_promo", "name", "id"], name="product_promo_name_idx"),
             models.Index(fields=["price", "name", "id"], name="product_price_name_idx"),
@@ -204,7 +206,7 @@ class ProductImage(TimeStampedModel):
     ordering = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ["ordering", "id"]
+        ordering: ClassVar[list] = ["ordering", "id"]
 
     def clean(self):
         super().clean()
@@ -232,7 +234,7 @@ class ProductDocument(TimeStampedModel):
     ordering = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ["ordering", "id"]
+        ordering: ClassVar[list] = ["ordering", "id"]
 
     def __str__(self):
         return f"{self.product_id} · {self.title}"
@@ -253,7 +255,7 @@ class Collection(TimeStampedModel, SeoFieldsMixin):
     products = models.ManyToManyField(Product, through="CollectionItem", related_name="collections", blank=True)
 
     class Meta:
-        ordering = ["-is_featured", "name"]
+        ordering: ClassVar[list] = ["-is_featured", "name"]
 
     def __str__(self):
         return self.name
@@ -279,8 +281,8 @@ class CollectionItem(TimeStampedModel):
     highlight = models.CharField(max_length=120, blank=True)
 
     class Meta:
-        ordering = ["ordering", "id"]
-        constraints = [
+        ordering: ClassVar[list] = ["ordering", "id"]
+        constraints: ClassVar[list] = [
             models.UniqueConstraint(fields=["collection", "product"], name="unique_collection_product"),
         ]
 
@@ -307,11 +309,11 @@ class SellerOffer(TimeStampedModel):
     warehouse_source = models.CharField(max_length=120, blank=True)
 
     class Meta:
-        ordering = ["-is_featured", "price", "id"]
-        constraints = [
+        ordering: ClassVar[list] = ["-is_featured", "price", "id"]
+        constraints: ClassVar[list] = [
             models.UniqueConstraint(fields=["product", "seller"], name="unique_product_seller_offer"),
         ]
-        indexes = [
+        indexes: ClassVar[list] = [
             models.Index(fields=["product", "status", "price"], name="selleroffer_prod_price_idx"),
             models.Index(fields=["seller", "status", "price"], name="selleroffer_seller_price_idx"),
         ]
@@ -338,11 +340,11 @@ class SellerInventory(TimeStampedModel):
     is_primary = models.BooleanField(default=False)
 
     class Meta:
-        ordering = ["-is_primary", "warehouse_name", "id"]
-        constraints = [
+        ordering: ClassVar[list] = ["-is_primary", "warehouse_name", "id"]
+        constraints: ClassVar[list] = [
             models.UniqueConstraint(fields=["offer", "warehouse_name"], name="unique_offer_warehouse_name"),
         ]
-        indexes = [
+        indexes: ClassVar[list] = [
             models.Index(fields=["offer", "-is_primary"], name="sellerinv_offer_primary_idx"),
         ]
 
@@ -364,10 +366,10 @@ class ProductReview(TimeStampedModel):
     unhelpful_count = models.PositiveIntegerField(default=0)
 
     class Meta:
-        constraints = [
+        constraints: ClassVar[list] = [
             models.UniqueConstraint(fields=["product", "user"], name="unique_product_review_per_user"),
         ]
-        ordering = ["-created_at", "-id"]
+        ordering: ClassVar[list] = ["-created_at", "-id"]
 
     def __str__(self):
         return f"Review(product={self.product_id}, user={self.user_id}, rating={self.rating})"
@@ -379,7 +381,7 @@ class ProductReviewComment(TimeStampedModel):
     text = models.TextField()
 
     class Meta:
-        ordering = ["created_at", "id"]
+        ordering: ClassVar[list] = ["created_at", "id"]
 
     def __str__(self):
         return f"ReviewComment(review={self.review_id}, user={self.user_id})"
@@ -392,7 +394,7 @@ class ProductReviewPhoto(TimeStampedModel):
     ordering = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ["ordering", "id"]
+        ordering: ClassVar[list] = ["ordering", "id"]
 
     def __str__(self):
         return f"ReviewPhoto(review={self.review_id})"
@@ -408,7 +410,7 @@ class ProductReviewVote(TimeStampedModel):
     value = models.CharField(max_length=16, choices=Value.choices)
 
     class Meta:
-        constraints = [
+        constraints: ClassVar[list] = [
             models.UniqueConstraint(fields=["review", "user"], name="unique_review_vote_per_user"),
         ]
 
@@ -432,7 +434,7 @@ class ProductQuestion(TimeStampedModel):
     is_public = models.BooleanField(default=True)
 
     class Meta:
-        ordering = ["-created_at", "-id"]
+        ordering: ClassVar[list] = ["-created_at", "-id"]
 
     def __str__(self):
         return f"ProductQuestion(product={self.product_id}, user={self.user_id})"

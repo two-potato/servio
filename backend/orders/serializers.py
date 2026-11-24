@@ -1,12 +1,23 @@
-from rest_framework import serializers
-from django.db import transaction
-from django.db.models import Prefetch
-from .models import Order, OrderItem, OrderSellerSplit, SellerOrder, SellerOrderItem, Shipment, ShipmentItem
+from typing import ClassVar
+
 from catalog.models import Product
 from catalog.offer_service import active_offer_queryset, resolve_product_offer
-from commerce.models import DeliveryAddress, LegalEntityMembership
 from commerce.company_service import resolve_order_approval_requirement
+from commerce.models import DeliveryAddress, LegalEntityMembership
+from django.db import transaction
+from django.db.models import Prefetch
 from promotions.services import create_redemption, resolve_checkout_discount
+from rest_framework import serializers
+
+from .models import (
+    Order,
+    OrderItem,
+    OrderSellerSplit,
+    SellerOrder,
+    SellerOrderItem,
+    Shipment,
+    ShipmentItem,
+)
 from .services import plan_seller_splits
 
 
@@ -47,13 +58,13 @@ class OrderSellerSplitSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OrderSellerSplit
-        fields = ["seller", "seller_store_name", "items_count", "subtotal", "status"]
+        fields: ClassVar[list] = ["seller", "seller_store_name", "items_count", "subtotal", "status"]
 
 
 class ShipmentItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShipmentItem
-        fields = ["seller_order_item", "qty"]
+        fields: ClassVar[list] = ["seller_order_item", "qty"]
 
 
 class ShipmentSerializer(serializers.ModelSerializer):
@@ -61,13 +72,13 @@ class ShipmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Shipment
-        fields = ["id", "tracking_number", "delivery_method", "warehouse_name", "status", "packed_at", "shipped_at", "delivered_at", "items"]
+        fields: ClassVar[list] = ["id", "tracking_number", "delivery_method", "warehouse_name", "status", "packed_at", "shipped_at", "delivered_at", "items"]
 
 
 class SellerOrderItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = SellerOrderItem
-        fields = ["id", "product", "seller_offer", "name", "price", "qty"]
+        fields: ClassVar[list] = ["id", "product", "seller_offer", "name", "price", "qty"]
 
 
 class SellerOrderSerializer(serializers.ModelSerializer):
@@ -77,7 +88,7 @@ class SellerOrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SellerOrder
-        fields = [
+        fields: ClassVar[list] = [
             "id", "seller", "seller_store_name", "status", "customer_comment", "internal_comment",
             "subtotal", "discount_amount", "total", "accepted_at", "shipped_at", "delivered_at",
             "items", "shipments",
@@ -86,7 +97,7 @@ class SellerOrderSerializer(serializers.ModelSerializer):
 class OrderItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderItem
-        fields = ["product","name","price","qty"]
+        fields: ClassVar[list] = ["product","name","price","qty"]
 
 class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True, read_only=True)
@@ -94,13 +105,13 @@ class OrderSerializer(serializers.ModelSerializer):
     seller_orders = SellerOrderSerializer(many=True, read_only=True)
     class Meta:
         model = Order
-        fields = [
+        fields: ClassVar[list] = [
             "id","legal_entity","placed_by","delivery_address","status","split_status",
             "approval_status","requested_by","approved_by","approved_at",
             "customer_comment","coupon_code","source_channel",
             "subtotal","discount_amount","total","created_at","updated_at","items","seller_splits","seller_orders"
         ]
-        read_only_fields = ["placed_by","status","split_status","approval_status","requested_by","approved_by","approved_at","subtotal","discount_amount","total","created_at","updated_at"]
+        read_only_fields: ClassVar[list] = ["placed_by","status","split_status","approval_status","requested_by","approved_by","approved_at","subtotal","discount_amount","total","created_at","updated_at"]
 
 class OrderCreateSerializer(serializers.Serializer):
     legal_entity_id = serializers.IntegerField()

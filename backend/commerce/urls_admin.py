@@ -1,7 +1,10 @@
 from django.urls import path
+
 from .views_admin import (
-    ApproveMembershipView, RejectMembershipView,
-    ApproveEntityCreationView, RejectEntityCreationView
+    ApproveEntityCreationView,
+    ApproveMembershipView,
+    RejectEntityCreationView,
+    RejectMembershipView,
 )
 
 urlpatterns = [

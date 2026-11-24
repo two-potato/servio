@@ -1,8 +1,14 @@
-from django.urls import path, include
+from django.urls import include, path
 from rest_framework.routers import DefaultRouter
+
 from .views_public import (
-    CheckInnView, MembershipRequestViewSet, DeliveryAddressViewSet,
-    lookup_party_by_inn, lookup_bank_by_bik, lookup_party_preview, lookup_reverse_geocode,
+    CheckInnView,
+    DeliveryAddressViewSet,
+    MembershipRequestViewSet,
+    lookup_bank_by_bik,
+    lookup_party_by_inn,
+    lookup_party_preview,
+    lookup_reverse_geocode,
 )
 
 router = DefaultRouter()

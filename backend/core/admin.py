@@ -1,5 +1,7 @@
 from django.contrib import admin
+
 from .models import IdempotencyKey
+
 
 @admin.register(IdempotencyKey)
 class IdempotencyKeyAdmin(admin.ModelAdmin):

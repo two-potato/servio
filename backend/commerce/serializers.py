@@ -1,5 +1,8 @@
+from typing import ClassVar
+
 from rest_framework import serializers
-from .models import DeliveryAddress, MembershipRequest, LegalEntityCreationRequest
+
+from .models import DeliveryAddress, LegalEntityCreationRequest, MembershipRequest
 
 
 class CheckInnResponseSerializer(serializers.Serializer):
@@ -15,7 +18,7 @@ class CheckInnRequestSerializer(serializers.Serializer):
 class MembershipRequestCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = MembershipRequest
-        fields = ["id","legal_entity","comment"]
+        fields: ClassVar[list] = ["id","legal_entity","comment"]
 
     def create(self, validated_data):
         validated_data["applicant"] = self.context["request"].user
@@ -25,7 +28,7 @@ class MembershipRequestCreateSerializer(serializers.ModelSerializer):
 class LegalEntityCreationRequestCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = LegalEntityCreationRequest
-        fields = ["id","name","inn","bik","checking_account","bank_name"]
+        fields: ClassVar[list] = ["id","name","inn","bik","checking_account","bank_name"]
 
     def create(self, validated_data):
         validated_data["applicant"] = self.context["request"].user
@@ -35,11 +38,11 @@ class LegalEntityCreationRequestCreateSerializer(serializers.ModelSerializer):
 class DeliveryAddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = DeliveryAddress
-        fields = [
+        fields: ClassVar[list] = [
             "id","label","country","city","street","postcode","details",
             "latitude","longitude","is_default","legal_entity"
         ]
-        read_only_fields = ["legal_entity"]
+        read_only_fields: ClassVar[list] = ["legal_entity"]
 
 
 class SimpleOkSerializer(serializers.Serializer):

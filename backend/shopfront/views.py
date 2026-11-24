@@ -1,88 +1,154 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from django.http import Http404
-from django.http import JsonResponse, HttpResponse
-from django.template.loader import render_to_string
+import json
+import logging
+from decimal import Decimal
+from urllib.parse import urlencode
+from uuid import uuid4
+from xml.sax.saxutils import escape
+
 from catalog.models import (
-    Product,
-    Category,
     Brand,
-    Tag,
+    Category,
+    Collection,
+    Product,
     ProductImage,
     ProductReview,
     ProductReviewComment,
     ProductReviewVote,
-    Collection,
     SellerOffer,
+    Tag,
 )
-from catalog.offer_service import active_offer_queryset, apply_offer_snapshot, resolve_product_offer
-from django.core.paginator import Paginator, EmptyPage
-from django.views import View
-from django.views.generic import TemplateView
-from django.utils.decorators import method_decorator
+from catalog.offer_service import (
+    active_offer_queryset,
+    apply_offer_snapshot,
+    resolve_product_offer,
+)
+from commerce.company_service import resolve_order_approval_requirement
+from commerce.models import (
+    DeliveryAddress,
+    LegalEntityMembership,
+    SellerStore,
+    StoreReview,
+)
+from core.logging_utils import log_calls
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.decorators.csrf import ensure_csrf_cookie
-from django.middleware.csrf import get_token
 from django.core.cache import cache
-from django.contrib import messages
-from django.db.models import Avg, Count, Case, When, IntegerField, Value, FloatField, Prefetch
-from django.db.models import Q
+from django.core.paginator import EmptyPage, Paginator
 from django.db import transaction
-from django.db.models.functions import Coalesce
-from orders.models import Order, OrderItem, FakeAcquiringPayment, OrderApprovalLog
-from orders.payment_providers import get_payment_provider
-from commerce.models import LegalEntityMembership, DeliveryAddress, SellerStore, StoreReview
-from commerce.company_service import resolve_order_approval_requirement
-from .forms import ContactFeedbackForm
-from .models import (
-    FavoriteProduct,
-    SavedSearch,
-    PersistentCart,
-    CategorySubscription,
-    BrandSubscription,
-    SavedList,
-    SavedListItem,
+from django.db.models import (
+    Avg,
+    Case,
+    Count,
+    FloatField,
+    IntegerField,
+    Prefetch,
+    Q,
+    Value,
+    When,
 )
-from .tasks import notify_contact_feedback
-from .cart_store import persist_cart_for_user
+from django.db.models.functions import Coalesce
+from django.http import Http404, HttpResponse, JsonResponse
+from django.middleware.csrf import get_token
+from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import render_to_string
+from django.urls import reverse
+from django.utils import timezone
+from django.utils.decorators import method_decorator
+from django.views import View
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.generic import TemplateView
+from orders.models import FakeAcquiringPayment, Order, OrderApprovalLog, OrderItem
+from orders.payment_providers import get_payment_provider
+from promotions.services import create_redemption, resolve_checkout_discount
+from users.models import UserProfile
+
+from . import search as sf_search
 from .cart_checkout_service import (
     cart_badge_context as _cart_badge_context,
+)
+from .cart_checkout_service import (
     cart_summary as _cart_summary,
+)
+from .cart_checkout_service import (
     checkout_addresses_queryset,
     checkout_cart_tracking_payload,
     checkout_company_snapshots,
     checkout_identity_defaults,
+)
+from .cart_checkout_service import (
     session_cart as _cart,
+)
+from .cart_mutation_service import (
+    add_to_cart_session,
+    clear_cart_session,
+    remove_from_cart_session,
+    update_cart_session,
+)
+from .cart_store import persist_cart_for_user
+from .catalog_selectors import (
+    cached_catalog_default_page_ids as _cached_catalog_default_page_ids,
+)
+from .catalog_selectors import (
+    cached_catalog_default_total_count as _cached_catalog_default_total_count,
+)
+from .catalog_selectors import (
+    cached_home_category_ids as _cached_home_category_ids,
+)
+from .catalog_selectors import (
+    cached_home_product_ids as _cached_home_product_ids,
+)
+from .catalog_selectors import (
+    catalog_price_stats as _catalog_price_stats,
+)
+from .catalog_selectors import (
+    category_breadcrumbs as _category_breadcrumbs,
+)
+from .catalog_selectors import (
+    category_descendant_ids as _category_descendant_ids,
+)
+from .catalog_selectors import (
+    category_option_rows as _category_option_rows,
+)
+from .catalog_selectors import (
+    facet_option_counts as _facet_option_counts,
+)
+from .catalog_selectors import (
+    ordered_products_with_related as _ordered_products_with_related,
+)
+from .catalog_selectors import (
+    seller_facet_counts as _seller_facet_counts,
+)
+from .catalog_selectors import (
+    with_rating as _with_rating,
 )
 from .checkout_flow_service import (
     build_checkout_context as _build_checkout_context,
+)
+from .checkout_flow_service import (
     ensure_checkout_idempotency_key,
     fake_payment_template_context,
 )
-from .catalog_selectors import (
-    cached_catalog_default_page_ids as _cached_catalog_default_page_ids,
-    cached_catalog_default_total_count as _cached_catalog_default_total_count,
-    cached_home_category_ids as _cached_home_category_ids,
-    cached_home_product_ids as _cached_home_product_ids,
-    catalog_price_stats as _catalog_price_stats,
-    category_breadcrumbs as _category_breadcrumbs,
-    category_descendant_ids as _category_descendant_ids,
-    category_option_rows as _category_option_rows,
-    facet_option_counts as _facet_option_counts,
-    ordered_products_with_related as _ordered_products_with_related,
-    seller_facet_counts as _seller_facet_counts,
-    with_rating as _with_rating,
+from .forms import ContactFeedbackForm
+from .live_search_service import live_search_context
+from .models import (
+    BrandSubscription,
+    CategorySubscription,
+    FavoriteProduct,
+    PersistentCart,
+    SavedList,
+    SavedListItem,
+    SavedSearch,
 )
-from .search_service import get_search_provider, DatabaseSearchProvider, suggest_query_corrections
 from .recommendations import (
-    record_recent_view,
-    recently_viewed_ids_for_user,
-    frequently_bought_together_ids,
-    seller_cross_sell_ids,
-    personalized_home_sections,
-    featured_collection_ids,
     brand_highlight_ids,
+    featured_collection_ids,
+    frequently_bought_together_ids,
+    personalized_home_sections,
+    recently_viewed_ids_for_user,
+    record_recent_view,
+    seller_cross_sell_ids,
 )
 from .review_service import (
     apply_review_vote,
@@ -95,25 +161,13 @@ from .review_service import (
     update_review_comment,
     upsert_product_review,
 )
-from .live_search_service import live_search_context
-from .cart_mutation_service import (
-    add_to_cart_session,
-    clear_cart_session,
-    remove_from_cart_session,
-    update_cart_session,
+from .search_service import (
+    DatabaseSearchProvider,
+    get_search_provider,
+    suggest_query_corrections,
 )
-from promotions.services import create_redemption, resolve_checkout_discount
-import logging
-import json
-from uuid import uuid4
-from django.utils import timezone
-from core.logging_utils import log_calls
-from decimal import Decimal
-from . import search as sf_search
-from urllib.parse import urlencode
-from django.urls import reverse
-from xml.sax.saxutils import escape
-from users.models import UserProfile
+from .tasks import notify_contact_feedback
+
 log = logging.getLogger("shopfront")
 COMPARE_SESSION_KEY = "compare_products"
 COMPARE_LIMIT = 4
@@ -1614,8 +1668,7 @@ class CatalogView(View):
             page = int(request.GET.get("page") or 1)
         except (TypeError, ValueError):
             page = 1
-        if page < 1:
-            page = 1
+        page = max(page, 1)
         page_size = 16
         selected_category_obj = None
         selected_seller_store = None

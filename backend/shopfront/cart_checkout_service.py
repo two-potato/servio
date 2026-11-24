@@ -3,12 +3,11 @@ import logging
 from collections import OrderedDict
 from decimal import Decimal
 
-from django.db.models import Prefetch
-
 from catalog.models import Product, ProductImage
 from catalog.offer_service import active_offer_queryset, apply_offer_snapshot
 from commerce.company_service import ensure_approval_policy, ensure_company_workspace
 from commerce.models import CompanyMembership, DeliveryAddress
+from django.db.models import Prefetch
 from orders.models import Order
 from promotions.services import resolve_checkout_discount
 

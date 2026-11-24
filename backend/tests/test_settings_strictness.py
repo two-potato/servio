@@ -4,7 +4,6 @@ from pathlib import Path
 import pytest
 from django.core.exceptions import ImproperlyConfigured
 
-
 SETTINGS_BASE_PATH = Path(__file__).resolve().parents[1] / "config" / "settings" / "base.py"
 
 

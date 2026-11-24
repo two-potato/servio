@@ -1,11 +1,11 @@
 from decimal import Decimal
-
-from django.conf import settings
-from django.db import models
-from django.utils import timezone
+from typing import ClassVar
 
 from catalog.models import Brand, Category, Product
 from core.models import TimeStampedModel
+from django.conf import settings
+from django.db import models
+from django.utils import timezone
 
 
 class PromotionRule(TimeStampedModel):
@@ -42,7 +42,7 @@ class PromotionRule(TimeStampedModel):
     )
 
     class Meta:
-        ordering = ["name", "id"]
+        ordering: ClassVar[list] = ["name", "id"]
 
     def __str__(self):
         return self.name
@@ -66,7 +66,7 @@ class Coupon(TimeStampedModel):
     per_user_limit = models.PositiveIntegerField(null=True, blank=True)
 
     class Meta:
-        ordering = ["code"]
+        ordering: ClassVar[list] = ["code"]
 
     def __str__(self):
         return self.code
@@ -86,10 +86,10 @@ class PromotionRedemption(TimeStampedModel):
     discount_amount = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal("0.00"))
 
     class Meta:
-        constraints = [
+        constraints: ClassVar[list] = [
             models.UniqueConstraint(fields=["coupon", "order"], name="unique_coupon_redemption_per_order"),
         ]
-        ordering = ["-created_at", "-id"]
+        ordering: ClassVar[list] = ["-created_at", "-id"]
 
     def __str__(self):
         return f"{self.coupon.code} -> order {self.order_id}"

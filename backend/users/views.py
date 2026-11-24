@@ -1,8 +1,19 @@
+import hashlib
+import hmac
+import json
+import logging
+import time
+import urllib.parse
+
+from core.logging_utils import log_calls
+from django.conf import settings
+from django.contrib.auth import get_user_model
+from drf_spectacular.utils import extend_schema
+from rest_framework import permissions
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from rest_framework import permissions
-from drf_spectacular.utils import extend_schema
-from django.contrib.auth import get_user_model
+from rest_framework_simplejwt.tokens import AccessToken
+
 from .models import UserProfile
 from .serializers import (
     MeSerializer,
@@ -10,15 +21,6 @@ from .serializers import (
     TelegramWebAppAuthResponseSerializer,
     UserDetailSerializer,
 )
-import json
-import urllib.parse
-import hmac
-import hashlib
-import time
-from django.conf import settings
-from rest_framework_simplejwt.tokens import AccessToken
-from core.logging_utils import log_calls
-import logging
 
 log = logging.getLogger("users")
 

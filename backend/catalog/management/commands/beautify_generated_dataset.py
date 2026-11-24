@@ -1,12 +1,11 @@
 from __future__ import annotations
 
+from commerce.models import DeliveryAddress, LegalEntity
 from django.core.management.base import BaseCommand
 from django.db import transaction
-
-from catalog.models import Brand, Category, Color, Country, Product, Series, Tag
-from commerce.models import DeliveryAddress, LegalEntity
 from users.models import User, UserProfile
 
+from catalog.models import Brand, Category, Color, Country, Product, Series, Tag
 
 FIRST_NAMES = [
     "Лев",

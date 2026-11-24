@@ -1,12 +1,11 @@
-import os
 import logging
+import os
 from typing import Iterable
 
 import sentry_sdk
 from sentry_sdk.integrations.celery import CeleryIntegration
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.logging import LoggingIntegration
-
 
 _INITIALIZED_SERVICES: set[str] = set()
 

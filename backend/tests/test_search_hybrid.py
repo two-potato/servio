@@ -1,9 +1,7 @@
 import pytest
-
 from catalog.models import Brand, Category, Product
 from shopfront import search as sf_search
 from shopfront.search_service import HybridSearchProvider, rewrite_query
-
 
 pytestmark = pytest.mark.django_db
 

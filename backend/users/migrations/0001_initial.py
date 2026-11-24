@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
@@ -8,11 +10,11 @@ import django.contrib.auth.validators
 class Migration(migrations.Migration):
     initial = True
 
-    dependencies = [
+    dependencies: ClassVar[list] = [
         ("auth", "0012_alter_user_first_name_max_length"),
     ]
 
-    operations = [
+    operations: ClassVar[list] = [
         migrations.CreateModel(
             name="User",
             fields=[

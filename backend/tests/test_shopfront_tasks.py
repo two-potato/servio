@@ -1,6 +1,5 @@
 import pytest
 from django.test.utils import override_settings
-
 from shopfront import tasks as sf_tasks
 from users.models import UserProfile
 
