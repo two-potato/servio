@@ -1,37 +1,40 @@
-from django.contrib.auth import authenticate, login, logout
-from django.shortcuts import render, redirect
-from django.conf import settings
-from django.views.decorators.http import require_http_methods
-from django.contrib import messages
-from django.contrib.auth import get_user_model
-from django.core.cache import cache
-from django.http import Http404
-from django.views.decorators.http import require_POST
-from django.urls import reverse
-from django.utils.http import url_has_allowed_host_and_scheme
-from django.db.models import Q, Prefetch, Count
-from django.utils.text import slugify
-from django.utils import timezone
-from django.core.files.storage import default_storage
-from rest_framework_simplejwt.tokens import AccessToken, TokenError
+import logging
 from datetime import timedelta
+
 import requests
-from .forms import (
-    LoginForm,
-    RegisterForm,
-    ProfileForm,
-    LegalEntityRequestForm,
-    AddressForm,
-    SellerStoreForm,
-    SellerProductCreateForm,
+from commerce.company_service import (
+    approver_memberships_for_company,
+    ensure_company_workspace,
 )
-from .views import verify_init_data
 from core.logging_utils import log_calls
 from core.notifications import send_mail_message
-import logging
-from .models import UserProfile
+from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth import authenticate, get_user_model, login, logout
+from django.core.cache import cache
+from django.core.files.storage import default_storage
+from django.db.models import Count, Prefetch, Q
+from django.http import Http404
+from django.shortcuts import redirect, render
+from django.urls import reverse
+from django.utils import timezone
+from django.utils.http import url_has_allowed_host_and_scheme
+from django.utils.text import slugify
+from django.views.decorators.http import require_http_methods, require_POST
+from rest_framework_simplejwt.tokens import AccessToken, TokenError
 from shopfront.cart_store import merge_session_cart_with_persistent
-from commerce.company_service import ensure_company_workspace, approver_memberships_for_company
+
+from .forms import (
+    AddressForm,
+    LegalEntityRequestForm,
+    LoginForm,
+    ProfileForm,
+    RegisterForm,
+    SellerProductCreateForm,
+    SellerStoreForm,
+)
+from .models import UserProfile
+from .views import verify_init_data
 
 log = logging.getLogger("users")
 
@@ -53,9 +56,8 @@ def _approver_company_ids(user):
 
 
 def _visible_orders_queryset(user):
-    from orders.models import Order
     from catalog.models import ProductImage
-    from orders.models import OrderItem
+    from orders.models import Order, OrderItem
 
     item_qs = OrderItem.objects.select_related("product").prefetch_related(
         Prefetch(
@@ -75,8 +77,8 @@ def _visible_orders_queryset(user):
 
 
 def _company_workspace_rows(user, memberships):
-    from commerce.models import Company, CompanyMembership
     from commerce.company_service import ensure_approval_policy
+    from commerce.models import Company, CompanyMembership
 
     memberships = list(memberships)
     if not memberships:
@@ -312,10 +314,19 @@ def account_home(request):
         form.save()
         messages.success(request, "Профиль обновлён")
         return redirect("account_home")
+    from commerce.models import (
+        CompanyMembership,
+        DeliveryAddress,
+        LegalEntityMembership,
+    )
     from orders.models import Order
-    from commerce.models import LegalEntityMembership, DeliveryAddress
-    from shopfront.models import FavoriteProduct, SavedSearch, SavedList, BrandSubscription, CategorySubscription
-    from commerce.models import CompanyMembership
+    from shopfront.models import (
+        BrandSubscription,
+        CategorySubscription,
+        FavoriteProduct,
+        SavedList,
+        SavedSearch,
+    )
 
     memberships_qs = LegalEntityMembership.objects.filter(user=request.user)
     entity_ids = memberships_qs.values_list("legal_entity_id", flat=True)
@@ -393,7 +404,7 @@ def account_legal_entities(request):
     if not request.user.is_authenticated:
         return redirect("/account/login/?next=/account/legal/")
     profile, _ = UserProfile.objects.get_or_create(user=request.user)
-    from commerce.models import LegalEntityMembership, LegalEntityCreationRequest
+    from commerce.models import LegalEntityCreationRequest, LegalEntityMembership
     my_memberships = LegalEntityMembership.objects.select_related("legal_entity").filter(user=request.user)
     company_workspaces = _company_workspace_rows(request.user, my_memberships)
     form = LegalEntityRequestForm(request.POST or None)
@@ -556,7 +567,7 @@ def account_comments(request):
     if not request.user.is_authenticated:
         return redirect("/account/login/?next=/account/comments/")
     profile, _ = UserProfile.objects.get_or_create(user=request.user)
-    from catalog.models import ProductReviewComment, ProductImage
+    from catalog.models import ProductImage, ProductReviewComment
 
     comments = (
         ProductReviewComment.objects.select_related("review__product")
@@ -586,8 +597,8 @@ def account_seller_home(request):
         messages.error(request, "Раздел доступен только пользователям с ролью 'Продавец'")
         return redirect("account_home")
 
-    from commerce.models import LegalEntityMembership
     from catalog.models import Product, SellerInventory
+    from commerce.models import LegalEntityMembership
     from orders.models import SellerOrder
 
     store = getattr(request.user, "seller_store", None)
