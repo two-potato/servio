@@ -1,13 +1,15 @@
+from typing import ClassVar
+
 from django.db import migrations, models
 import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-    dependencies = [
+    dependencies: ClassVar[list] = [
         ("orders", "0002_add_checkout_fields"),
     ]
 
-    operations = [
+    operations: ClassVar[list] = [
         migrations.AlterField(
             model_name="order",
             name="delivery_address",

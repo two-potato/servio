@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from decimal import Decimal
 from django.db import migrations, models
 import django.db.models.deletion
@@ -5,11 +7,11 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
+    dependencies: ClassVar[list] = [
         ("orders", "0004_statuses_update"),
     ]
 
-    operations = [
+    operations: ClassVar[list] = [
         migrations.AlterField(
             model_name="order",
             name="payment_method",

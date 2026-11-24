@@ -1,13 +1,15 @@
+from typing import ClassVar
+
 from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
 
-    dependencies = [
+    dependencies: ClassVar[list] = [
         ("commerce", "0010_legalentity_members_alter_sellerstore_slug"),
     ]
 
-    operations = [
+    operations: ClassVar[list] = [
         migrations.AddField(
             model_name="sellerstore",
             name="is_featured",

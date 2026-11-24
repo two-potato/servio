@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from django.db import migrations
 
 
@@ -27,11 +29,11 @@ def backwards(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-    dependencies = [
+    dependencies: ClassVar[list] = [
         ("orders", "0003_order_fk_nullable"),
     ]
 
-    operations = [
+    operations: ClassVar[list] = [
         migrations.RunPython(forwards, backwards),
     ]
 

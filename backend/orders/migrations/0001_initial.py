@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from django.db import migrations, models
 import django.db.models.deletion
 from django.conf import settings
@@ -7,14 +9,14 @@ import django_fsm
 class Migration(migrations.Migration):
     initial = True
 
-    dependencies = [
+    dependencies: ClassVar[list] = [
         ("core", "0001_initial"),
         ("users", "0001_initial"),
         ("catalog", "0001_initial"),
         ("commerce", "0001_initial"),
     ]
 
-    operations = [
+    operations: ClassVar[list] = [
         migrations.CreateModel(
             name="Order",
             fields=[
